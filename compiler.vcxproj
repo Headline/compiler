@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\compiler.cpp" />
+    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\parser.cpp" />
     <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\scanner.cpp" />
     <ClCompile Include="scanner.h" />
   </ItemGroup>
@@ -160,13 +161,11 @@
     <Text Include="..\..\..\..\Headline%27s SHit\GitHub\compiler\compiler\grammar.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\parser.h" />
     <ClInclude Include="debug.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\Headline%27s SHit\GitHub\compiler\compiler\test.ds">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </Text>
+    <None Include="..\..\..\Headline%27s SHit\GitHub\compiler\test.ds" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
