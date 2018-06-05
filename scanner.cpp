@@ -72,7 +72,7 @@ int Scanner::Position() const
 	return pos;
 }
 
-int Scanner::BufferSize() const
+size_t Scanner::BufferSize() const
 {
 	return chars.size();
 }

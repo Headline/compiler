@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Headline%27s SHit\GitHub\compiler\compiler\compiler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="scanner.h">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Headline%27s SHit\GitHub\compiler\compiler\scanner.cpp">
+    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\compiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\scanner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

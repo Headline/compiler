@@ -51,7 +51,7 @@ public:
 	 * Returns the length of the buffer. This value can/will change as Next() is called and
 	 * more tokens are fetched.
 	 */
-	int BufferSize() const;
+	size_t BufferSize() const;
 
 private:
 	std::ifstream fin;
