@@ -53,7 +53,14 @@ public:
 	 */
 	size_t BufferSize() const;
 
+	/**
+	 * Returns the amount of newlines we've passed, this is useful for the parser to report
+	 * to ErrorSys which line the error was on
+	 */
+	int GetLineNumber() const;
+
 private:
+	int line;
 	std::ifstream fin;
 	std::vector<char> chars;
 	int pos;

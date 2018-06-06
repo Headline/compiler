@@ -153,6 +153,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\compiler.cpp" />
+    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\error.cpp" />
+    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\parser.cpp" />
     <ClCompile Include="tokenizer.cpp" />
     <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\scanner.cpp" />
     <ClCompile Include="scanner.h" />
@@ -161,6 +163,8 @@
     <Text Include="..\..\..\..\Headline%27s SHit\GitHub\compiler\compiler\grammar.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\error.h" />
+    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\parser.h" />
     <ClInclude Include="tokenizer.h" />
     <ClInclude Include="debug.h" />
   </ItemGroup>

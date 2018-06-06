@@ -15,10 +15,12 @@
 
 ///#define SCANNER_DEBUG
 ///#define TOKENIZER_DEBUG
+#define PARSER_DEBUG
 
 #ifdef DEBUG_ALL
 	#define SCANNER_DEBUG
 	#define TOKENIZER_DEBUG
+	#define PARSER_DEBUG
 #endif // DEBUG_ALL
 
 

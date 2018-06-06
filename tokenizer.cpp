@@ -100,3 +100,8 @@ void Tokenizer::Back()
 {
 	pos--;
 }
+
+const Scanner *Tokenizer::GetScanner()
+{
+	return scanner.get();
+}

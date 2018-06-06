@@ -56,7 +56,14 @@ char Scanner::Next()
 	}
 	
 	if (pos != chars.size())
-		return chars[pos++];
+	{
+		char temp = chars[pos];
+		if (temp == '\n') // hit a new line, lets inc 
+			line++;
+
+		pos++;
+		return temp;
+	}
 	else
 		return EOF;
 }
@@ -64,6 +71,11 @@ char Scanner::Next()
 void Scanner::Back()
 {
 	assert(pos > 0);
+
+
+	if (chars[pos] == '\n') // we moved back, lets dec
+		line--;
+
 	pos--;
 }
 
@@ -75,4 +87,9 @@ int Scanner::Position() const
 size_t Scanner::BufferSize() const
 {
 	return chars.size();
+}
+
+int Scanner::GetLineNumber() const
+{
+	return line;
 }
