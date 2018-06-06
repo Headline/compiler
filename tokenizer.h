@@ -26,14 +26,14 @@ struct ParseState
  * we no longer buffer in advance, so every *new* step forward determines what the
  * parser stepped over, and stores it in a ParseState.
  */
-class Parser
+class Tokenizer
 {
 public:
 	/**
 	 * Creates the parser, we give the parser our scanner.
 	 * The parser is now the owner of the scanner (std::move)
 	 */
-	Parser(std::unique_ptr<Scanner> &scanner);
+	Tokenizer(std::unique_ptr<Scanner> &scanner);
 
 	/**
 	 * Advances the parser forward, returning the current parse state

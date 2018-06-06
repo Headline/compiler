@@ -1,12 +1,12 @@
-#include "parser.h"
+#include "tokenizer.h"
 
-Parser::Parser(std::unique_ptr<Scanner> &scanner)
+Tokenizer::Tokenizer(std::unique_ptr<Scanner> &scanner)
 	: scanner(std::move(scanner))
 {
 	pos = 0;
 }
 
-ParseState *Parser::Next()
+ParseState *Tokenizer::Next()
 {
 	if (pos != states.size())
 	{
@@ -51,7 +51,7 @@ ParseState *Parser::Next()
 	return ptr;
 }
 
-void Parser::Back()
+void Tokenizer::Back()
 {
 	pos--;
 }
