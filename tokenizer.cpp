@@ -71,10 +71,16 @@ finalize_tok:
 	{
 		tok->tok = tIDENT;
 	}
+	
 	if (identifier == "int")
 	{
 		tok->tok = tINT;
 	}
+	else if (identifier == "func")
+	{
+		tok->tok = tFUNC;
+	}
+
 
 	tok->identifier = identifier;
 

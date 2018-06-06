@@ -13,7 +13,8 @@
 enum TOK
 {
 	tINT = -1,
-	tIDENT = -2
+	tIDENT = -2,
+	tFUNC = -3
 };
 
 /**
