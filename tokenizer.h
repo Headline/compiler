@@ -41,26 +41,26 @@ struct Token
 
 /** 
  * Similar to how the scanner works, we cache everything we step past in a buffer. 
- * This allows us to move backwards in the parser indefinitely. Unlike the scanner,
+ * This allows us to move backwards in the tokenizer indefinitely. Unlike the scanner,
  * we no longer buffer in advance, so every *new* step forward determines what the
- * parser stepped over, and stores it in a ParseState.
+ * tokenizer stepped over, and stores it in a Token type.
  */
 class Tokenizer
 {
 public:
 	/**
-	 * Creates the parser, we give the parser our scanner.
-	 * The parser is now the owner of the scanner (std::move)
+	 * Creates the tokenizer, we give the tokenizer our scanner.
+	 * The tokenizer is now the owner of the scanner (std::move)
 	 */
 	Tokenizer(std::unique_ptr<Scanner> &scanner);
 
 	/**
-	 * Advances the parser forward, returning the current parse state
+	 * Advances the tokenizer forward, returning the current parse state
 	 */
 	Token *Next();
 
 	/**
-	 * Retreats the parser backwards. The parser must have been advanced
+	 * Retreats the tokenizer backwards. The tokenizer must have been advanced
 	 * previously or else this call will fail.
 	 */
 	void Back();
