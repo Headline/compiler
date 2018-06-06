@@ -6,46 +6,85 @@ Tokenizer::Tokenizer(std::unique_ptr<Scanner> &scanner)
 	pos = 0;
 }
 
-ParseState *Tokenizer::Next()
+inline bool isspecialtoken(char tok)
+{
+	static const char constarr[] = { ';' };
+	for (int i = 0; i < sizeof(constarr); ++i) {
+		if (tok == constarr[i])
+			return true;
+	}
+
+	return false;
+}
+
+Token *Tokenizer::Next()
 {
 	if (pos != states.size())
 	{
 		return states[pos].get();
 	}
 
-	auto state = std::make_unique<ParseState>();
+	auto tok = std::make_unique<Token>();
 	
 	char c;
 	while (isspace((c = scanner->Next()))) {
-#ifdef PARSER_DEBUG
+#ifdef TOKENIZER_DEBUG
 		printf("Parser skipping a space...\n");
 #endif
 	} // eat spaces  
 
 	if (c == EOF)
 	{
-#ifdef PARSER_DEBUG
+#ifdef TOKENIZER_DEBUG
 		printf("Hit EOF after spaces skipped.. returning nullptr\n");
 #endif
 		return nullptr;
 	}
 
-	std::string tok;
+	std::string identifier;
+	bool special = false;
 	do
 	{
 		if (c == EOF)
 			break; // leave this token spliced
-		tok.append(1, c);
-	} while (!isspace((c = scanner->Next()))); // keep eating until we get another space
+		
+		/* If we hit a special token off the bat, we need to
+		 * just jump directly to the finalization
+		 */
+		if (isspecialtoken(c)) {
+			tok->tok = (TOK)c;
+			goto finalize_tok;
+		}
 
-#ifdef PARSER_DEBUG
-	printf("Token \"%s\" built, pushing to states\n", tok.c_str());
+		identifier.append(1, c);
+
+	} while (!isspace((c = scanner->Next())) && !isspecialtoken(c)); // keep eating until we get another space or special token
+	
+	if (isspecialtoken(c)) // we hit a special on accident, lets remove it from the thing
+	{
+		scanner->Back(); // step scanner back
+	}
+
+finalize_tok:
+
+	if (tok->tok == 0)
+	{
+		tok->tok = tIDENT;
+	}
+	if (identifier == "int")
+	{
+		tok->tok = tINT;
+	}
+
+	tok->identifier = identifier;
+
+
+#ifdef TOKENIZER_DEBUG
+	printf("Token \"%s\" built, pushing to states\n", tok.ToString());
 #endif
 
-	state->tok = tok;
-
-	ParseState *ptr = state.get();
-	states.push_back(std::move(state));
+	Token *ptr = tok.get();
+	states.push_back(std::move(tok));
 
 	pos++;
 	return ptr;

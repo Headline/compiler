@@ -1,5 +1,5 @@
-#ifndef H_PARSER // double include protection
-#define H_PARSER
+#ifndef H_TOKENIZER // double include protection
+#define H_TOKENIZER
 
 #include <memory>
 
@@ -7,18 +7,36 @@
 #include "scanner.h"
 
 /**
- * Represents a token, keyword, literal, or other symbol.
- * This will probably not survive past the devopment stage, but
- * it can be considered a snapshot of the current parser location.
- */
-struct ParseState
+  * The wrapper around a character, but with keywords being identified as neg values.
+  * TOK tok = ';' is intended to be valid
+  */
+enum TOK
 {
-	bool expr;
-	bool symbol;
-	bool lit;
-	bool keyword;
-	std::string tok;
+	tINT = -1,
+	tIDENT = -2
 };
+
+/**
+ * Represents a token which is a keyword, literal, or other symbol.
+ */
+struct Token
+{
+	TOK tok;
+	std::string identifier;
+
+	/**
+	 * Returns a string reperesentation of the thing, useful for
+	 * debug stuff
+	 */
+	std::string ToString()
+	{
+		if (tok > 0)
+			return std::string(1, (char)tok);
+		else
+			return identifier;
+	}
+};
+
 
 /** 
  * Similar to how the scanner works, we cache everything we step past in a buffer. 
@@ -38,7 +56,7 @@ public:
 	/**
 	 * Advances the parser forward, returning the current parse state
 	 */
-	ParseState *Next();
+	Token *Next();
 
 	/**
 	 * Retreats the parser backwards. The parser must have been advanced
@@ -48,8 +66,8 @@ public:
 
 private:
 	std::unique_ptr<Scanner> scanner;
-	std::vector<std::unique_ptr<ParseState>> states;
+	std::vector<std::unique_ptr<Token>> states;
 	int pos;
 };
 
-#endif // H_PARSER
+#endif // H_TOKENIZER
