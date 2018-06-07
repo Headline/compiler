@@ -7,16 +7,20 @@
 #define DEFAULT_TEST_FILE
 
 /* Global debug which enables all debug printing across the compiler */
-#define DEBUG_ALL
+//#define DEBUG_ALL
 
 /* Individual debug information for every piece of the compiler. 
  * Uncomment one to allow debug prints for it's critical operations
  */
 
 ///#define SCANNER_DEBUG
+///#define TOKENIZER_DEBUG
+///#define PARSER_DEBUG
 
 #ifdef DEBUG_ALL
 	#define SCANNER_DEBUG
+	#define TOKENIZER_DEBUG
+	#define PARSER_DEBUG
 #endif // DEBUG_ALL
 
 

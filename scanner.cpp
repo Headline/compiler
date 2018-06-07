@@ -1,6 +1,6 @@
 #include "scanner.h"
 
-Scanner::Scanner(const char *filename, int bufferlen) : bufferlen(bufferlen)
+Scanner::Scanner(const char *filename) : in(fin)
 {
 	fin.open(filename, std::ios::in);
 
@@ -13,36 +13,17 @@ Scanner::Scanner(const char *filename, int bufferlen) : bufferlen(bufferlen)
 		exit(EXIT_FAILURE);
 	}
 
-
 #ifdef SCANNER_DEBUG
 	printf("Creating scanner w/ buffer len of %d\n", bufferlen);
 #endif
-
-	assert(bufferlen > 0);
-	
-	GrabChars();
 }
 
-void Scanner::GrabChars()
+bool Scanner::Peek(char in)
 {
-	int len = bufferlen;
-	while (!!len)
-	{
-		char c;
-		fin.get(c);
-		if (fin.eof())
-			return;
+	char temp = this->Next();
+	this->Back();
 
-		if (c == '\n')
-			continue;
-
-		chars.push_back(c);
-		len--;
-
-#ifdef SCANNER_DEBUG
-		printf("Retrieved char %c, pushed to end of buffer\n", c);
-#endif
-	}
+	return temp == in;
 }
 
 char Scanner::Next()
@@ -52,7 +33,8 @@ char Scanner::Next()
 #ifdef SCANNER_DEBUG
 		printf("Next() call resulted in requirement to grab more chars\n");
 #endif
-		GrabChars();
+
+		chars.push_back(in.Get()); // grabs the next char from CharFetcher & pushes to next pos
 	}
 	
 	if (pos != chars.size())
@@ -61,10 +43,13 @@ char Scanner::Next()
 		return EOF;
 }
 
+#define SCANNER_DEBUG
+
 void Scanner::Back()
 {
 	assert(pos > 0);
 	pos--;
+
 }
 
 int Scanner::Position() const
@@ -75,4 +60,9 @@ int Scanner::Position() const
 size_t Scanner::BufferSize() const
 {
 	return chars.size();
+}
+
+int Scanner::GetLineNumber() const
+{
+	return in.LineCount();
 }
