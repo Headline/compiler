@@ -160,9 +160,6 @@
     <ClCompile Include="scanner.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\Headline%27s SHit\GitHub\compiler\compiler\grammar.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\error.h" />
     <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\parser.h" />
     <ClInclude Include="tokenizer.h" />
@@ -170,6 +167,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Headline%27s SHit\GitHub\compiler\test.ds" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\Headline%27s SHit\GitHub\compiler\grammar.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

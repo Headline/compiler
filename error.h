@@ -5,14 +5,14 @@
 #include "tokenizer.h"
 
 /**
-* It is the parser's job to make sense of the syntax, and ensure that
-* the grammar of the source programmign language is correct. The parser
-* will also be given a pointer to the errorsys, which handles any syntax
-* errors that may occur.
-*
-* We store the errors and wait before they're outputted in an effort to 
-* recover from them. Spew() will output all errors to stdout.
-*/
+ * It is the parser's job to make sense of the syntax, and ensure that
+ * the grammar of the source programmign language is correct. The parser
+ * will also be given a pointer to the errorsys, which handles any syntax
+ * errors that may occur.
+ *
+ * We store the errors and wait before they're outputted in an effort to 
+ * recover from them. Spew() will output all errors to stdout.
+ */
 class ErrorSys
 {
 public:
@@ -35,11 +35,16 @@ public:
 	 */
 	void Spew();
 
+	/**
+	 * Returns if we've hit a fatal error 
+	 */
+	bool Fatal();
+
 private:
-	int fatals;
-	int warnings;
 	std::vector<std::string> phrases;
 	std::vector<std::string> output;
+	int fatals;
+	int warnings;
 };
 
 #endif // H_ERROR

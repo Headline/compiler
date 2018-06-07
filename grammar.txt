@@ -1,0 +1,10 @@
+statement ::= <identifier> '=' <expression>
+			| '{' {statement_list} '}'
+			| {declaration} ';'
+
+declaration ::= 'int' <identifier>
+
+statement_list ::= {statement} ';' {statement_list}
+				| {statement}
+
+function ::= 'func' <identifier> '(' ')' '{' {statement_list} '}'

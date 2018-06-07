@@ -6,7 +6,7 @@ Parser::Parser(std::unique_ptr<Tokenizer> &tokenizer, ErrorSys *errorsys)
 	this->errorsys = errorsys;
 }
 
-void Parser::Validate()
+void Parser::Parse()
 {
 	Token *last = nullptr;
 	Token *current;
@@ -24,5 +24,6 @@ void Parser::Validate()
 		last = current;
 	}
 
-	errorsys->Spew();
+	if (errorsys->Fatal())
+		errorsys->Spew();
 }

@@ -13,9 +13,19 @@
 class Parser
 {
 public:
+	/**
+	 * Initializes the parser with the given Tokenizer and ErrorSys
+	 * such that the incomming token stream can be read from and
+	 * any syntax errors can be reported.
+	 */
 	Parser(std::unique_ptr<Tokenizer> &tokenizer, ErrorSys *errorsys);
 
-	void Validate();
+	/**
+	 * Starts the parsing process which validates whether or not
+	 * the source language is meaningful and reports syntax errors
+	 */
+	void Parse();
+
 private:
 	std::unique_ptr<Tokenizer> tokenizer;
 	ErrorSys *errorsys;

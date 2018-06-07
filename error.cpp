@@ -21,3 +21,8 @@ void ErrorSys::Spew()
 		printf("// %s\n", str.c_str());
 	}
 }
+
+bool ErrorSys::Fatal()
+{
+	return fatals > 0;
+}
