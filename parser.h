@@ -26,6 +26,10 @@ public:
 	 */
 	void Parse();
 
+	/**
+	 * Parses a function.
+	 */
+	void DoFunction();
 private:
 	std::unique_ptr<Tokenizer> tokenizer;
 	ErrorSys *errorsys;

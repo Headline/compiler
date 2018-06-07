@@ -43,8 +43,6 @@ char Scanner::Next()
 		return EOF;
 }
 
-#define SCANNER_DEBUG
-
 void Scanner::Back()
 {
 	assert(pos > 0);

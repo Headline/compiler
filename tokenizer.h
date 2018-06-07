@@ -67,6 +67,20 @@ public:
 	void Back();
 
 	/**
+	 * Returns whether or not the next token is of the same
+	 * type as the input parameter.
+	 */
+	bool Peek(TOK tok);
+
+	/**
+	* Returns whether or not the next token is of the same
+	* type as the input parameter, advances the tokenizer if it does
+	* and also gives back the Token pointer, it returns a nullptr
+	* if match was unsuccessful.
+	*/
+	Token *Match(TOK tok);
+
+	/**
 	 * Returns the scanner pointer, which is helpful for grabbing
 	 * the current line number for ErrorSys.
 	 */

@@ -8,7 +8,7 @@ Tokenizer::Tokenizer(std::unique_ptr<Scanner> &scanner)
 
 inline bool isspecialtoken(char tok)
 {
-	static const char constarr[] = { ';' };
+	static const char constarr[] = { ';', '(', ')', '{', '}' };
 	for (int i = 0; i < sizeof(constarr); ++i) {
 		if (tok == constarr[i])
 			return true;
@@ -21,7 +21,7 @@ Token *Tokenizer::Next()
 {
 	if (pos != states.size())
 	{
-		return states[pos].get();
+		return states[pos++].get();
 	}
 
 	auto tok = std::make_unique<Token>();
@@ -101,7 +101,23 @@ void Tokenizer::Back()
 	pos--;
 }
 
+bool Tokenizer::Peek(TOK tok)
+{
+	TOK peeked = this->Next()->tok;
+	this->Back();
+
+	return peeked == tok;
+}
+
 const Scanner *Tokenizer::GetScanner()
 {
 	return scanner.get();
+}
+
+Token *Tokenizer::Match(TOK token)
+{
+	if (this->Peek(token)) {
+		return this->Next();
+	}
+	return nullptr;
 }
