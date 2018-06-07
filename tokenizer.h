@@ -24,6 +24,7 @@ struct Token
 {
 	TOK tok;
 	std::string identifier;
+	int line; 
 
 	/**
 	 * Returns a string reperesentation of the thing, useful for

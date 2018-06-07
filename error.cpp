@@ -10,7 +10,7 @@ void ErrorSys::Error(int error, int line)
 	fatals++;
 
 	char errorbuffer[128]; // should definitely be big enough, we're not a c++ compiler :^)
-	snprintf(errorbuffer, sizeof(errorbuffer), "[Error] [Line %d] : %s", line, phrases[error].c_str());
+	snprintf(errorbuffer, sizeof(errorbuffer), "[Error] [Line %d]: %s", line, phrases[error].c_str());
 	output.push_back(errorbuffer);
 }
 

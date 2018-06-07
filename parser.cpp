@@ -18,7 +18,7 @@ void Parser::Validate()
 		if (last != nullptr)
 		{
 			if (current->tok == ';' && last->tok == ';')
-				errorsys->Error(0, tokenizer->GetScanner()->GetLineNumber());
+				errorsys->Error(0, current->line);
 		}
 
 		last = current;

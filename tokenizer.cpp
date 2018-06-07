@@ -80,13 +80,13 @@ finalize_tok:
 	{
 		tok->tok = tFUNC;
 	}
-
+	tok->line = scanner->GetLineNumber();
 
 	tok->identifier = identifier;
 
 
 #ifdef TOKENIZER_DEBUG
-	printf("Token \"%s\" built, pushing to states\n", tok.ToString());
+	printf("Token \"%s\" built (line %d), pushing to states\n", tok->ToString().c_str(), tok->line);
 #endif
 
 	Token *ptr = tok.get();

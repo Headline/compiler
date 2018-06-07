@@ -17,8 +17,8 @@ public:
 
 	void Validate();
 private:
-	ErrorSys *errorsys;
 	std::unique_ptr<Tokenizer> tokenizer;
+	ErrorSys *errorsys;
 };
 
 #endif // H_PARSER
