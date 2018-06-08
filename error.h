@@ -1,6 +1,7 @@
 #ifndef H_ERROR // double include protection
 #define H_ERROR
 
+#include <cstdarg>
 #include "debug.h"
 #include "tokenizer.h"
 
@@ -28,7 +29,7 @@ public:
 	 * Queues up error of the given index. Each error number directly corresponds with
 	 * an index in the phrases vector.
 	 */
-	void Error(int error, int lines);
+	void Error(int error, int lines, ...);
 
 	/**
 	 * Spits out all errors queued to the stdout

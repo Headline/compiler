@@ -3,23 +3,25 @@
 ErrorSys::ErrorSys()
 {
 	phrases.push_back("empty statement");
-	phrases.push_back("expected token <identifier>");
-	phrases.push_back("expected token '('");
-	phrases.push_back("expected token ')'");
-	phrases.push_back("expected token '{'");
-	phrases.push_back("expected token '}'");
-	phrases.push_back("expected token <value>");
-	phrases.push_back("expected token ';'");
+	phrases.push_back("expected token '%s'");
 
 }
 
-void ErrorSys::Error(int error, int line)
+void ErrorSys::Error(int error, int line, ...)
 {
+	va_list ap;
+	va_start(ap, line);
+	
 	fatals++;
 
-	char errorbuffer[128]; // should definitely be big enough, we're not a c++ compiler :^)
-	snprintf(errorbuffer, sizeof(errorbuffer), "[Error] [Line %d]: %s", line, phrases[error].c_str());
-	output.push_back(errorbuffer);
+	char errorstr[128];
+	vsnprintf(errorstr, sizeof(errorstr), phrases[error].c_str(), ap);
+
+	char errorstring[256];
+	snprintf(errorstring, sizeof(errorstring), "[Error] [Line %d]: %s", line, errorstr);
+	output.push_back(errorstring);
+	va_end(ap);
+
 }
 
 void ErrorSys::Spew()

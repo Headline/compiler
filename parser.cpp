@@ -27,18 +27,18 @@ void Parser::DoFunction()
 
 	Token *ident;
 	if ((ident = tokenizer->Match(tIDENT)) == nullptr) {
-		errorsys->Error(1, func->line); // expected token <identifier>
+		errorsys->Error(1, func->line, "<identifier>"); // expected token <identifier>
 		return;
 	}
 
 	// TODO: args
 	Token *tok;
 	if ((tok = tokenizer->Match((TOK)'(')) == nullptr) {
-		errorsys->Error(2, func->line); // expected token '('
+		errorsys->Error(1, func->line, "(");
 		return;
 	}
 	if ((tok = tokenizer->Match((TOK)')')) == nullptr) {
-		errorsys->Error(3, func->line); // expected token ')'
+		errorsys->Error(1, func->line, ")");
 		return;
 	}
 
@@ -47,19 +47,16 @@ void Parser::DoFunction()
 		// error, we'll match the next token and point our error there.
 		tok = tokenizer->Next();
 		tokenizer->Back(); // back off the token to report the error
-		errorsys->Error(4, tok->line); // expected token '{'
+		errorsys->Error(1, tok->line, "{"); // expected token '{'
 		return;
 	}
-	getchar();
+
 	// we matched '{' above, but a statement can include the brackets so
 	// we'll give the '{' back to the tokenizer and fall into ParseStatement
 	tokenizer->Back();
 
 	std::unique_ptr<StatementList> list = std::make_unique<StatementList>();
 	DoStatements(list.get());
-
-	// TODO: parse statements and start creating structures to store stuff
-	// into in order to build parse trees and the fun stuff.
 }
 
 inline bool IsStatement(Tokenizer *tokenizer)
@@ -108,7 +105,7 @@ void Parser::DoStatements(StatementList *list)
 		// error, we'll match the next token and point our error there.
 		tok = tokenizer->Next();
 		tokenizer->Back(); // back off the token to report the error
-		errorsys->Error(4, tok->line); // expected token '{'
+		errorsys->Error(1, tok->line, "{"); // expected token '{'
 		return;
 	}
 
@@ -129,11 +126,17 @@ void Parser::DoStatements(StatementList *list)
 	printf("Statements parsed... %d found\n", list->list.size());
 #endif
 	if ((tok = tokenizer->Match((TOK)'}')) == nullptr) {
-		errorsys->Error(5, -1); // expected token '}'
+		errorsys->Error(1, tokenizer->GetScanner()->GetLineNumber(), "}"); // expected token '}'
 		return;
 	}
 }
 
+inline void EatUntilNext(TOK tok, Tokenizer *tokenizer)
+{
+	Token *token;
+	while ((token = tokenizer->Next())->tok != (TOK)tok) {
+	} // keep eating tokens until we hit whatever
+}
 
 bool Parser::DoStatement(Statement &statement)
 {
@@ -157,17 +160,15 @@ bool Parser::DoStatement(Statement &statement)
 				statement.rvalue = value->identifier;
 				Token *semicolon = tokenizer->Next();
 				if (semicolon->tok != (TOK)';') {
-					// bad assignment, so lets try and recover. We'll step forward tokens until
-					// we hit a ';', and then fail out of this function.
 
-					while ((semicolon = tokenizer->Next())->tok != (TOK)';') {} // keep eating tokens until we hit a ';'
+					EatUntilNext((TOK)';', tokenizer.get()); // recover
+					errorsys->Error(1, semicolon->line, ";");
 					return false;
-
-					errorsys->Error(7, semicolon->line);
 				}
 			}
 			else {
-				errorsys->Error(6, value->line); // we'll step forward, grab the line, and ignore it.
+				EatUntilNext((TOK)';', tokenizer.get()); // recover
+				errorsys->Error(1, value->line, "<value>"); // we'll step forward, grab the line, and ignore it.
 			}
 		}
 	}
@@ -176,23 +177,17 @@ bool Parser::DoStatement(Statement &statement)
 		Token *identifier = tokenizer->Next();
 		if (identifier->tok != tIDENT)
 		{
-			errorsys->Error(0, identifier->line); // expected token <identifier>
+			errorsys->Error(1, identifier->line, "<identifier>"); // expected token <identifier>
 			
-			// bad declaration, so lets try and recover. We'll step forward tokens until
-			// we hit a ';', and then fail out of this function.
-
-			while ((identifier = tokenizer->Next())->tok != (TOK)';'){} // keep eating tokens until we hit a ';'
+			EatUntilNext((TOK)';', tokenizer.get()); // recover
 			return false;
 		}
 		Token *semicolon = tokenizer->Next();
 		if (semicolon->tok != (TOK)';') {
-			// bad assignment, so lets try and recover. We'll step forward tokens until
-			// we hit a ';', and then fail out of this function.
 
-			while ((semicolon = tokenizer->Next())->tok != (TOK)';') {} // keep eating tokens until we hit a ';'
+			EatUntilNext((TOK)';', tokenizer.get()); // recover
+			errorsys->Error(1, semicolon->line, ";");
 			return false;
-
-			errorsys->Error(7, semicolon->line);
 		}
 
 		statement.declaration = true;
