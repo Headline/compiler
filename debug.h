@@ -1,6 +1,8 @@
 #ifndef H_DEBUG // double include protection
 #define H_DEBUG
 
+#define COMPILER_VERSION "$$version$"
+
 /* Forces the test file test.ds to be used when parameterless, this is 
  * so things play nice with vs debugger
  */

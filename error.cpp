@@ -26,10 +26,13 @@ void ErrorSys::Error(int error, int line, ...)
 
 void ErrorSys::Spew() const
 {
-	printf("// compiler exited with %d errors!\n", output.size());
 	for (auto str : output) {
-		printf("// %s\n", str.c_str());
+		fprintf(stderr, "%s\n", str.c_str());
 	}
+
+	printf("Compiler exited with %d errors!\n", output.size());
+
+	printf("\n");
 }
 
 bool ErrorSys::Fatal() const
