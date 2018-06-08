@@ -2,8 +2,8 @@
 
 ErrorSys::ErrorSys()
 {
-	phrases.push_back("empty statement");
-	phrases.push_back("expected token '%s'");
+	phrases.push_back("empty statement");			// 0
+	phrases.push_back("expected token '%s'");		// 1
 
 }
 
@@ -24,7 +24,7 @@ void ErrorSys::Error(int error, int line, ...)
 
 }
 
-void ErrorSys::Spew()
+void ErrorSys::Spew() const
 {
 	printf("// compiler exited with %d errors!\n", output.size());
 	for (auto str : output) {
@@ -32,7 +32,7 @@ void ErrorSys::Spew()
 	}
 }
 
-bool ErrorSys::Fatal()
+bool ErrorSys::Fatal() const
 {
 	return fatals > 0;
 }

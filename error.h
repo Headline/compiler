@@ -34,12 +34,12 @@ public:
 	/**
 	 * Spits out all errors queued to the stdout
 	 */
-	void Spew();
+	void Spew() const;
 
 	/**
 	 * Returns if we've hit a fatal error 
 	 */
-	bool Fatal();
+	bool Fatal() const;
 
 private:
 	std::vector<std::string> phrases;
