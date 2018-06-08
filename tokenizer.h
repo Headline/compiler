@@ -111,7 +111,6 @@ public:
 	TempToken(Tokenizer *tokenizer)
 		: t(tokenizer->Next()), tokenizer(tokenizer) {
 	}
-
 	~TempToken() {
 		tokenizer->Back();
 	}
@@ -124,6 +123,8 @@ public:
 
 		this->tokenizer = tokenizer;
 		this->t = tokenizer->Next();
+
+		return *this;
 	}
 	Token *get() const {
 		return t;

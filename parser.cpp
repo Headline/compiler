@@ -12,8 +12,12 @@ void Parser::Parse()
 		this->DoFunction();
 	}
 
-	if (errorsys->Fatal())
+	if (errorsys->Fatal()) {
 		errorsys->Spew();
+		getchar(); // freeze before exit
+
+		exit(EXIT_FAILURE);
+	}
 }
 
 void Parser::DoFunction()

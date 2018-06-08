@@ -15,22 +15,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scanner.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\compiler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\scanner.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="tokenizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\parser.cpp">
+    <ClCompile Include="compiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\error.cpp">
+    <ClCompile Include="error.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scanner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,20 +38,23 @@
     <ClInclude Include="tokenizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\parser.h">
+    <ClInclude Include="error.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\error.h">
+    <ClInclude Include="language-constructs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\language-constructs.h">
+    <ClInclude Include="parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\scanner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Headline%27s SHit\GitHub\compiler\test.ds" />
+    <None Include="test.ds" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\Headline%27s SHit\GitHub\compiler\grammar.txt" />
+    <Text Include="grammar.txt" />
   </ItemGroup>
 </Project>

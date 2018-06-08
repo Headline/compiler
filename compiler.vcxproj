@@ -157,9 +157,9 @@
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="tokenizer.cpp" />
     <ClCompile Include="scanner.cpp" />
-    <ClCompile Include="scanner.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="scanner.h" />
     <ClInclude Include="error.h" />
     <ClInclude Include="language-constructs.h" />
     <ClInclude Include="parser.h" />
