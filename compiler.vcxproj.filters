@@ -47,6 +47,9 @@
     <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\error.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\language-constructs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Headline%27s SHit\GitHub\compiler\test.ds" />

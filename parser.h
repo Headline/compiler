@@ -4,6 +4,8 @@
 #include "debug.h"
 #include "tokenizer.h"
 #include "error.h"
+#include "language-constructs.h"
+
 /**
  * It is the parser's job to make sense of the syntax, and ensure that
  * the grammar of the source programmign language is correct. The parser
@@ -30,6 +32,18 @@ public:
 	 * Parses a function.
 	 */
 	void DoFunction();
+
+	/**
+	 * Parses statements, and stores their representation in the StatementList.
+	 */
+	void DoStatements(StatementList *list);
+
+	/**
+	 * Parses a statement, and stores the representation in the statement provided.
+	 * Returns true if the statement is syntax valid and the parameter was populated.
+	 */
+	bool DoStatement(Statement &statement);
+
 private:
 	std::unique_ptr<Tokenizer> tokenizer;
 	ErrorSys *errorsys;

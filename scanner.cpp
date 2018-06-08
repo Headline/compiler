@@ -14,7 +14,7 @@ Scanner::Scanner(const char *filename) : in(fin)
 	}
 
 #ifdef SCANNER_DEBUG
-	printf("Creating scanner w/ buffer len of %d\n", bufferlen);
+	printf("Creating scanner\n");
 #endif
 }
 
@@ -30,10 +30,6 @@ char Scanner::Next()
 {
 	if (pos == chars.size() && !fin.eof()) // fetch more if we even can
 	{
-#ifdef SCANNER_DEBUG
-		printf("Next() call resulted in requirement to grab more chars\n");
-#endif
-
 		chars.push_back(in.Get()); // grabs the next char from CharFetcher & pushes to next pos
 	}
 	

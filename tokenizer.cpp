@@ -8,7 +8,7 @@ Tokenizer::Tokenizer(std::unique_ptr<Scanner> &scanner)
 
 inline bool isspecialtoken(char tok)
 {
-	static const char constarr[] = { ';', '(', ')', '{', '}' };
+	static const char constarr[] = { ';', '(', ')', '{', '}', '=' };
 	for (int i = 0; i < sizeof(constarr); ++i) {
 		if (tok == constarr[i])
 			return true;
@@ -80,8 +80,12 @@ finalize_tok:
 	{
 		tok->tok = tFUNC;
 	}
-	tok->line = scanner->GetLineNumber();
+	else if (isdigit(identifier[0]))
+	{
+		tok->tok = tVAL;
+	}
 
+	tok->line = scanner->GetLineNumber();
 	tok->identifier = identifier;
 
 
@@ -103,10 +107,8 @@ void Tokenizer::Back()
 
 bool Tokenizer::Peek(TOK tok)
 {
-	TOK peeked = this->Next()->tok;
-	this->Back();
-
-	return peeked == tok;
+	TempToken token = this;
+	return token->tok == tok;
 }
 
 const Scanner *Tokenizer::GetScanner()

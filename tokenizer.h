@@ -14,7 +14,8 @@ enum TOK
 {
 	tINT = -1,
 	tIDENT = -2,
-	tFUNC = -3
+	tFUNC = -3,
+	tVAL = -4,
 };
 
 /**
@@ -56,7 +57,8 @@ public:
 	Tokenizer(std::unique_ptr<Scanner> &scanner);
 
 	/**
-	 * Advances the tokenizer forward, returning the current parse state
+	 * Advances the tokenizer forward, returning the current parse state.
+	 * If you mean to step forward temporarily, consider using TempToken.
 	 */
 	Token *Next();
 
@@ -90,6 +92,45 @@ private:
 	std::unique_ptr<Scanner> scanner;
 	std::vector<std::unique_ptr<Token>> states;
 	int pos;
+};
+
+
+/**
+ * A very useful class which allows us to give a tokenizer
+ * and this class will advance the tokenizer forward, allow
+ * us to interact with the token directly, but will automatically
+ * step the tokenizer backwards when this token goes out of scope.
+ * It is essentially an RAII container for a Token, but instead of
+ * freeing the memory when going out of scope, we just step the 
+ * tokenizer backwards.
+ *
+ * see IsStatement in parser.cpp
+ */
+class TempToken {
+public:
+	TempToken(Tokenizer *tokenizer)
+		: t(tokenizer->Next()), tokenizer(tokenizer) {
+	}
+
+	~TempToken() {
+		tokenizer->Back();
+	}
+	Token *operator ->() const {
+		return t;
+	}
+	TempToken &operator =(Tokenizer *tokenizer) {
+		if (t != nullptr)
+			tokenizer->Back();
+
+		this->tokenizer = tokenizer;
+		this->t = tokenizer->Next();
+	}
+	Token *get() const {
+		return t;
+	}
+private:
+	Tokenizer *tokenizer;
+	Token *t;
 };
 
 #endif // H_TOKENIZER

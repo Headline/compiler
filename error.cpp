@@ -6,6 +6,11 @@ ErrorSys::ErrorSys()
 	phrases.push_back("expected token <identifier>");
 	phrases.push_back("expected token '('");
 	phrases.push_back("expected token ')'");
+	phrases.push_back("expected token '{'");
+	phrases.push_back("expected token '}'");
+	phrases.push_back("expected token <value>");
+	phrases.push_back("expected token ';'");
+
 }
 
 void ErrorSys::Error(int error, int line)
