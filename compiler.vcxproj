@@ -152,25 +152,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\compiler.cpp" />
-    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\error.cpp" />
-    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\parser.cpp" />
+    <ClCompile Include="compiler.cpp" />
+    <ClCompile Include="error.cpp" />
+    <ClCompile Include="parser.cpp" />
     <ClCompile Include="tokenizer.cpp" />
-    <ClCompile Include="..\..\..\Headline%27s SHit\GitHub\compiler\scanner.cpp" />
+    <ClCompile Include="scanner.cpp" />
     <ClCompile Include="scanner.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\error.h" />
-    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\language-constructs.h" />
-    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\parser.h" />
+    <ClInclude Include="error.h" />
+    <ClInclude Include="language-constructs.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="tokenizer.h" />
     <ClInclude Include="debug.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\Headline%27s SHit\GitHub\compiler\test.ds" />
+    <None Include="test.ds" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\Headline%27s SHit\GitHub\compiler\grammar.txt" />
+    <Text Include="grammar.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
