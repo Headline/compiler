@@ -14,8 +14,6 @@ void Parser::Parse()
 
 	if (errorsys->Fatal()) {
 		errorsys->Spew();
-		getchar(); // freeze before exit
-
 		exit(EXIT_FAILURE);
 	}
 }

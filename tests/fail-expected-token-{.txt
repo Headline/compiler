@@ -1,0 +1,1 @@
+[Error] [Line 2]: expected token '{'

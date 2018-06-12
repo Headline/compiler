@@ -6,7 +6,7 @@
 /* Forces the test file test.ds to be used when parameterless, this is 
  * so things play nice with vs debugger
  */
-#define DEFAULT_TEST_FILE
+//#define DEFAULT_TEST_FILE
 
 /* Global debug which enables all debug printing across the compiler */
 //#define DEBUG_ALL
