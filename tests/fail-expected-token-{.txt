@@ -1,1 +1,1 @@
-[Error] [Line 2]: expected token '{'
+[Error] [Line 2]: expected token ')'
