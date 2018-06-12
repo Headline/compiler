@@ -14,7 +14,7 @@ def do_version_replace(current):
 
 	for i, line in enumerate(oldlist):
 		if "$$version$" in line:
-			print("Replacing...")
+			print("Versioning: " + current)
 			oldlist[i] = line.replace("$$version$", os.getenv('APPVEYOR_BUILD_VERSION', "XX.XX.XX"))
 		
 	with open(current, 'w') as f:
@@ -26,5 +26,4 @@ for dirpath, dirnames, filenames in os.walk(path):
 	for filename in filenames:
 		current = dirpath + "\\" + filename
 		if filename.endswith(".h"):
-			print("Versioning: " + current)
 			do_version_replace(current)
