@@ -6,6 +6,17 @@
 #include "tokenizer.h"
 
 /**
+ * Static list of errors used by ErrorSys to report errors. The index in this
+ * array corresponds with the desired error to be displayed by ErrorSys::Error
+ */
+static const char * const errors[] = {
+	/* 00 */	"empty statement",
+	/* 01 */	"expected token '%s'",
+	/* 02 */	"unexpected token '%s'",
+	/* 03 */	"expected built-in type, but got '%s'"
+};
+
+/**
  * It is the parser's job to make sense of the syntax, and ensure that
  * the grammar of the source programmign language is correct. The parser
  * will also be given a pointer to the errorsys, which handles any syntax
@@ -42,7 +53,6 @@ public:
 	bool Fatal() const;
 
 private:
-	std::vector<std::string> phrases;
 	std::vector<std::string> output;
 	int fatals;
 	int warnings;
