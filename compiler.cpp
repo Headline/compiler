@@ -46,6 +46,6 @@ int main(int argc, char *argv[])
 	parser->Parse();
 
 	if (!errsys->Fatal())
-		printf("Compilation ended successfully.");
+		printf("Compilation ended successfully.\n");
     return 0;
 }
