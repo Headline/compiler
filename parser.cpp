@@ -1,21 +1,141 @@
 #include "parser.h"
 
 Parser::Parser(std::unique_ptr<Tokenizer> &tokenizer, ErrorSys *errorsys)
-	: tokenizer(std::move(tokenizer))
+	: tokenizer(std::move(tokenizer)), parse(std::make_unique<::Parse>())
 {
 	this->errorsys = errorsys;
 }
 
 void Parser::Parse()
 {
-	if (tokenizer->Peek(tFUNC)) {
-		this->DoFunction();
+	while (true) {
+
+		Token *tok = tokenizer->Next();
+		tokenizer->Back();
+
+		if (tok == nullptr) {
+			goto end;
+		}
+
+		switch (tok->tok) {
+		case tFUNC:
+			DoFunction();
+			break;
+		case tNATIVE:
+			DoNative();
+			break;
+		default:
+			goto end;
+		}
 	}
 
+end:
 	if (errorsys->Fatal()) {
 		errorsys->Spew();
 		exit(EXIT_FAILURE);
 	}
+}
+
+inline void EatUntilNext(TOK tok, Tokenizer *tokenizer)
+{
+	Token *token;
+	while ((token = tokenizer->Next())->tok != (TOK)tok) {
+	} // keep eating tokens until we hit whatever
+}
+
+void Parser::DoNative()
+{
+	assert(tokenizer->Peek(tNATIVE));
+	Native native;
+
+	Token *func = tokenizer->Next(); // eat native
+
+	Token *ident;
+	if ((ident = tokenizer->Match(tIDENT)) == nullptr) {
+		errorsys->Error(1, func->line, "<identifier>"); // expected token <identifier>
+		EatUntilNext((TOK)';', tokenizer.get()); // recover
+		return;
+	}
+	Token *tok;
+	if ((tok = tokenizer->Match((TOK)'(')) == nullptr) {
+		errorsys->Error(1, func->line, "(");
+		EatUntilNext((TOK)')', tokenizer.get()); // recover
+		return;
+	}
+
+	ArgumentList args;
+	DoArguments(&args);
+
+	if ((tok = tokenizer->Match((TOK)')')) == nullptr) {
+		errorsys->Error(1, func->line, ")");
+		return;
+	}
+
+	native.identifier = ident->identifier;
+	native.arguments = args;
+
+	this->parse->natives.push_back(native);
+}
+
+void Parser::DoArguments(ArgumentList *args)
+{
+#ifdef PARSER_DEBUG
+	printf("Falling into argument parsing\n");
+#endif
+
+	Token *tok;
+	if ((tok = tokenizer->Match((TOK)'{')) != nullptr) {
+#ifdef PARSER_DEBUG
+		printf("Bad token, erroring..\n");
+#endif
+		tokenizer->Back();
+		errorsys->Error(2, tok->line, "{");
+		return;
+	}
+
+	bool another = !tokenizer->Peek((TOK)')');
+	while (another)
+	{
+#ifdef PARSER_DEBUG
+		printf("Argument found\n");
+#endif
+		Argument arg;
+
+		tok = tokenizer->Next(); // type
+#ifdef PARSER_DEBUG
+		printf("Grabbed type %c\n", tok->tok);
+#endif
+
+
+		if (!tokenizer->IsBuiltinType(tok->tok)) {
+			errorsys->Error(3, tok->line, tok->identifier); // expected token <identifier>
+
+			EatUntilNext((TOK)';', tokenizer.get()); // recover
+			return;
+		}
+
+		Token *identifier = tokenizer->Next();
+		if (identifier->tok != tIDENT) {
+			errorsys->Error(1, identifier->line, "<identifier>"); // expected token <identifier>
+
+			EatUntilNext((TOK)';', tokenizer.get()); // recover
+			return;
+		}
+
+		arg.type = tok->tok;
+		arg.identifier = identifier->identifier;
+		args->arguments.push_back(arg);
+
+		if (another = tokenizer->Peek((TOK)',')) {
+			tokenizer->Next(); // eat ','
+		}
+	}
+
+	TempToken token = tokenizer.get();
+#ifdef PARSER_DEBUG
+		printf("Argument end. Net token: %c/%i\n", token->tok, token->tok);
+#endif
+
 }
 
 void Parser::DoFunction()
@@ -33,12 +153,15 @@ void Parser::DoFunction()
 		return;
 	}
 
-	// TODO: args
 	Token *tok;
 	if ((tok = tokenizer->Match((TOK)'(')) == nullptr) {
 		errorsys->Error(1, func->line, "(");
 		return;
 	}
+
+	ArgumentList args;
+	DoArguments(&args);
+
 	if ((tok = tokenizer->Match((TOK)')')) == nullptr) {
 		errorsys->Error(1, func->line, ")");
 		return;
@@ -57,8 +180,15 @@ void Parser::DoFunction()
 	// we'll give the '{' back to the tokenizer and fall into ParseStatement
 	tokenizer->Back();
 
-	std::unique_ptr<StatementList> list = std::make_unique<StatementList>();
-	DoStatements(list.get());
+	StatementList list;
+	DoStatements(&list);
+
+	Function function;
+	function.statements = list;
+	function.identifier = ident->identifier;
+
+
+	this->parse->functions.push_back(function);
 }
 
 inline bool IsStatement(Tokenizer *tokenizer)
@@ -112,11 +242,8 @@ void Parser::DoStatements(StatementList *list)
 	}
 
 	Statement statement;
-	bool valid = false;
 	while (IsStatement(tokenizer.get())) {
-
-		valid = DoStatement(statement);
-		if (valid) {
+		if (DoStatement(statement)) {
 #ifdef PARSER_DEBUG
 			printf("Statement found, assign: %d\n", statement.assignment);
 #endif
@@ -127,17 +254,11 @@ void Parser::DoStatements(StatementList *list)
 #ifdef PARSER_DEBUG
 	printf("Statements parsed... %d found\n", list->list.size());
 #endif
+
 	if ((tok = tokenizer->Match((TOK)'}')) == nullptr) {
 		errorsys->Error(1, tokenizer->GetScanner()->GetLineNumber(), "}"); // expected token '}'
 		return;
 	}
-}
-
-inline void EatUntilNext(TOK tok, Tokenizer *tokenizer)
-{
-	Token *token;
-	while ((token = tokenizer->Next())->tok != (TOK)tok) {
-	} // keep eating tokens until we hit whatever
 }
 
 bool Parser::DoStatement(Statement &statement)

@@ -8,7 +8,7 @@ Tokenizer::Tokenizer(std::unique_ptr<Scanner> &scanner)
 
 inline bool isspecialtoken(char tok)
 {
-	static const char constarr[] = { ';', '(', ')', '{', '}', '=' };
+	static const char constarr[] = { ';', '(', ')', '{', '}', '=', ',' };
 	for (int i = 0; i < sizeof(constarr); ++i) {
 		if (tok == constarr[i])
 			return true;
@@ -80,6 +80,10 @@ finalize_tok:
 	{
 		tok->tok = tFUNC;
 	}
+	else if (identifier == "native")
+	{
+		tok->tok = tNATIVE;
+	}
 	else if (isdigit(identifier[0]))
 	{
 		tok->tok = tVAL;
@@ -122,4 +126,13 @@ Token *Tokenizer::Match(TOK token)
 		return this->Next();
 	}
 	return nullptr;
+
+}
+
+bool Tokenizer::IsBuiltinType(TOK tok)
+{
+	if (tok == tINT)
+		return true;
+
+	return false;
 }

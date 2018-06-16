@@ -6,9 +6,23 @@
 #include "error.h"
 #include "language-constructs.h"
 
+#include <memory>
+
+/**
+ * The parse class is the result of a complete parse built by the parser.
+ * It contains all native declarations, function declarations, etc that
+ * the parser has detected.
+ */
+class Parse
+{
+public:
+	std::vector<Function> functions;
+	std::vector<Native> natives;
+};
+
 /**
  * It is the parser's job to make sense of the syntax, and ensure that
- * the grammar of the source programmign language is correct. The parser
+ * the grammar of the source programming language is correct. The parser
  * will also be given a pointer to the errorsys, which handles any syntax
  * errors that may occur.
  */
@@ -44,7 +58,18 @@ public:
 	 */
 	bool DoStatement(Statement &statement);
 
+	/**
+	 * Parses a native declaration.
+	 */
+	void DoNative();
+
+	/**
+	 * Parses the arguments for a function or native declaration.
+	 */
+	void DoArguments(ArgumentList *args);
+
 private:
+	std::unique_ptr<::Parse> parse;
 	std::unique_ptr<Tokenizer> tokenizer;
 	ErrorSys *errorsys;
 };

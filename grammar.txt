@@ -2,9 +2,15 @@ statement ::= <identifier> '=' <expression>
 			| '{' {statement_list} '}'
 			| {declaration} ';'
 
-declaration ::= 'int' <identifier>
+declaration ::= builtin_type <identifier>
 
 statement_list ::= {statement} ';' {statement_list}
 				| {statement}
 
 function ::= 'func' <identifier> '(' ')' '{' {statement_list} '}'
+
+native ::= 'native' <identifier> '(' {param_list} ')' ';'
+
+param_list ::= declaration (',' declaration)*
+
+builtin_type ::= 'int'

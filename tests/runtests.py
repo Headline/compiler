@@ -5,15 +5,21 @@ import os.path
 import subprocess
 import tempfile
 import time
+from pathlib import Path
 
 def compare_files(comparisonfile, err):
-    lines = comparisonfile.readlines()
+    if comparisonfile == None:
+        lines = []
+    else:
+        lines = comparisonfile.readlines()
+	
     err.seek(0)
     complines = err.readlines()
 	
 	# clean filenames from C:\dir\dir\file.txt -> file.txt
-    comp = comparisonfile.name.split("\\")
-    comp = comp[len(comp)-1]
+    comp = err.name.split("\\")
+    comp = comp[len(comp)-1].split(".")
+    comp = comp[len(comp)-2]
 	
     if lines != complines:
         print("\n*******")
@@ -44,10 +50,16 @@ for dirpath, dirnames, filenames in os.walk(path):
 
                 os.close(garbage)
                 
-            with open(current.replace(".ds", ".txt")) as comp:
-                if not compare_files(comp, open(outfilename)):
+            tryopenname = current.replace(".ds", ".txt")
+            f = Path(tryopenname)
+            if f.is_file():
+                    with open(tryopenname) as comp:
+                        if not compare_files(comp, open(outfilename)):
+                            failure = failure + 1
+            else:
+                if not compare_files(None, open(outfilename)):
                     failure = failure + 1
-            
+                    
             os.unlink(outfilename) # remove .out, lets not be messy
            
 end = time.time()

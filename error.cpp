@@ -2,9 +2,10 @@
 
 ErrorSys::ErrorSys()
 {
-	phrases.push_back("empty statement");			// 0
-	phrases.push_back("expected token '%s'");		// 1
-
+	phrases.push_back("empty statement");							// 0
+	phrases.push_back("expected token '%s'");						// 1
+	phrases.push_back("unexpected token '%s'");						// 2
+	phrases.push_back("expected built-in type but got '%s'");		// 3
 }
 
 void ErrorSys::Error(int error, int line, ...)
