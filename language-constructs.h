@@ -18,4 +18,32 @@ class StatementList
 public:
 	std::vector<Statement> list;
 };
+
+class Argument
+{
+public:
+	TOK type;
+	std::string identifier;
+};
+
+class ArgumentList
+{
+public:
+	std::vector<Argument> arguments;
+};
+
+class Function
+{
+public:
+	std::string identifier;
+	StatementList statements;
+	ArgumentList arguments;
+};
+
+class Native
+{
+public:
+	std::string identifier;
+	ArgumentList arguments;
+};
 #endif // H_LANGUAGE_CONSTRUCTS

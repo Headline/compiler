@@ -16,6 +16,7 @@ enum TOK
 	tIDENT = -2,
 	tFUNC = -3,
 	tVAL = -4,
+	tNATIVE = -5,
 };
 
 /**
@@ -87,6 +88,11 @@ public:
 	 * the current line number for ErrorSys.
 	 */
 	const Scanner *GetScanner();
+
+	/**
+	 * Returns whether or not the supplied token is a built-in type
+	 */
+	bool IsBuiltinType(TOK tok);
 
 private:
 	std::unique_ptr<Scanner> scanner;
