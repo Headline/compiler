@@ -126,6 +126,7 @@ Token *Tokenizer::Match(TOK token)
 		return this->Next();
 	}
 	return nullptr;
+
 }
 
 bool Tokenizer::IsBuiltinType(TOK tok)

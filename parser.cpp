@@ -17,8 +17,7 @@ void Parser::Parse()
 			goto end;
 		}
 
-		switch (tok->tok)
-		{
+		switch (tok->tok) {
 		case tFUNC:
 			DoFunction();
 			break;
