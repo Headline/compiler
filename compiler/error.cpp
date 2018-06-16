@@ -15,7 +15,7 @@ void ErrorSys::Error(int error, int line, ...)
 	fatals++;
 
 	char errorstr[128];
-	vsnprintf(errorstr, sizeof(errorstr), this->errors[error], ap);
+	vsnprintf(errorstr, sizeof(errorstr), errors[error], ap);
 
 	char errorstring[256];
 	snprintf(errorstring, sizeof(errorstring), "[Error] [Line %d]: %s", line, errorstr);
