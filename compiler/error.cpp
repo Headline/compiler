@@ -1,11 +1,10 @@
 #include "error.h"
 
+
 ErrorSys::ErrorSys()
 {
-	phrases.push_back("empty statement");							// 0
-	phrases.push_back("expected token '%s'");						// 1
-	phrases.push_back("unexpected token '%s'");						// 2
-	phrases.push_back("expected built-in type but got '%s'");		// 3
+	this->fatals = 0;
+	this->warnings = 0;
 }
 
 void ErrorSys::Error(int error, int line, ...)
@@ -16,7 +15,7 @@ void ErrorSys::Error(int error, int line, ...)
 	fatals++;
 
 	char errorstr[128];
-	vsnprintf(errorstr, sizeof(errorstr), phrases[error].c_str(), ap);
+	vsnprintf(errorstr, sizeof(errorstr), this->errors[error], ap);
 
 	char errorstring[256];
 	snprintf(errorstring, sizeof(errorstring), "[Error] [Line %d]: %s", line, errorstr);

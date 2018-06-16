@@ -42,10 +42,15 @@ public:
 	bool Fatal() const;
 
 private:
-	std::vector<std::string> phrases;
 	std::vector<std::string> output;
 	int fatals;
 	int warnings;
+	const char * const errors[] = {
+		/* 00 */	"empty statement",
+		/* 01 */	"expected token '%s'",
+		/* 02 */	"unexpected token '%s'",
+		/* 03 */	"expected built-in type, but got '%s'"
+	};
 };
 
 #endif // H_ERROR
