@@ -1,6 +1,8 @@
 statement ::= <identifier> '=' <expression>
 			| '{' {statement_list} '}'
 			| {declaration} ';'
+			| <identifier> '(' ')' ';'
+			| <identifier> '(' <identifier> (',' <identifier>)* ')' ';'	
 
 declaration ::= builtin_type <identifier>
 

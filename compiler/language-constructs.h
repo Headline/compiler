@@ -11,6 +11,8 @@ public:
 	std::string rvalue;
 	bool declaration;
 	std::string var;
+	bool funccall;
+	std::string identifier;
 };
 
 class StatementList

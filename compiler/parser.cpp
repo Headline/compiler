@@ -248,16 +248,26 @@ inline bool IsStatement(Tokenizer *tokenizer)
 	}
 	else if (tok->tok == tIDENT)
 	{
-		TempToken equals = tokenizer;
-		if (equals.get() == nullptr) // eof
+		TempToken next = tokenizer;
+		if (next.get() == nullptr) // eof
 		{
 			return false;
 		}
 
-		if (equals->tok == (TOK)'=')
+		if (next->tok == (TOK)'=')
 		{
 			TempToken value = tokenizer;
 			return (value->tok == tVAL && tokenizer->Peek((TOK)';'));
+		}
+		else if (next->tok == (TOK)'(')
+		{
+			TempToken close = tokenizer;
+			if (close.get() == nullptr)
+			{
+				return false;
+			}
+
+			return (close->tok == (TOK)')' && tokenizer->Peek((TOK)';'));
 		}
 	}
 	return false;
@@ -308,8 +318,8 @@ bool Parser::DoStatement(Statement &statement)
 	Token *first = tokenizer->Next();
 	if (first->tok == tIDENT)
 	{
-		Token *equals = tokenizer->Next();
-		if (equals->tok == (TOK)'=') {
+		Token *next = tokenizer->Next();
+		if (next->tok == (TOK)'=') {
 			statement.lvalue = first->identifier;
 			statement.assignment = true;
 			Token *value = tokenizer->Next();
@@ -326,6 +336,16 @@ bool Parser::DoStatement(Statement &statement)
 			else {
 				EatUntilNext((TOK)';', tokenizer.get()); // recover
 				errorsys->Error(1, value->line, "<value>"); // we'll step forward, grab the line, and ignore it.
+			}
+		}
+		else if (next->tok == (TOK)'(') { // function call
+			Token *close = tokenizer->Next();
+			if (close->tok == (TOK)')') {
+				Token *semicolon = tokenizer->Next(); // eat ;
+				if (semicolon->tok == (TOK)';') {
+					statement.funccall = true;
+					statement.identifier = first->identifier;
+				}
 			}
 		}
 	}
