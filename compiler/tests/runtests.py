@@ -39,8 +39,8 @@ path = os.path.realpath(__file__).replace(sys.argv[0], "")
 for dirpath, dirnames, filenames in os.walk(path):
     for filename in filenames:
         current = dirpath + '\\' + filename
-        if filename.endswith(".ds"):
-            outfilename = current.replace(".ds", ".out")
+        if filename.endswith(".x"):
+            outfilename = current.replace(".x", ".out")
             with open(outfilename, 'w+') as err:
                 args = [sys.argv[1], current]
 
@@ -50,7 +50,7 @@ for dirpath, dirnames, filenames in os.walk(path):
 
                 os.close(garbage)
                 
-            tryopenname = current.replace(".ds", ".txt")
+            tryopenname = current.replace(".x", ".txt")
             f = Path(tryopenname)
             if f.is_file():
                     with open(tryopenname) as comp:

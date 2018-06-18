@@ -27,9 +27,9 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	if (!endswith(argv[1], ".ds"))
+	if (!endswith(argv[1], ".x"))
 	{
-		fprintf(stderr, "Error: source file must end in .ds");
+		fprintf(stderr, "Error: source file must end in .x");
 		return 0;
 	}
 #endif
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 #ifndef DEFAULT_TEST_FILE
 	std::unique_ptr<Scanner> scanner = std::make_unique<Scanner>(argv[1]);
 #else
-	std::unique_ptr<Scanner> scanner = std::make_unique<Scanner>("test.ds");
+	std::unique_ptr<Scanner> scanner = std::make_unique<Scanner>("test.x");
 #endif
 	std::unique_ptr<Tokenizer> tokenizer = std::make_unique<Tokenizer>(scanner);
 	std::unique_ptr<ErrorSys> errsys = std::make_unique<ErrorSys>();

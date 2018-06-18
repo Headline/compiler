@@ -97,7 +97,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(ProjectDir)test.ds" "$(ProjectDir)$(ConfigurationName)"</Command>
+      <Command>xcopy /y "$(ProjectDir)test.x" "$(ProjectDir)$(ConfigurationName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -167,7 +167,7 @@
     <ClInclude Include="debug.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="test.ds" />
+    <None Include="test.x" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="grammar.txt" />

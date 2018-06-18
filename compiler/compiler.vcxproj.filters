@@ -47,14 +47,14 @@
     <ClInclude Include="parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Headline%27s SHit\GitHub\compiler\scanner.h">
+    <ClInclude Include="scanner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="test.ds" />
+    <Text Include="grammar.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="grammar.txt" />
+    <None Include="test.x" />
   </ItemGroup>
 </Project>
