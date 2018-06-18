@@ -26,12 +26,14 @@ Token *Tokenizer::Next()
 
 	auto tok = std::make_unique<Token>();
 	
-	char c;
-	while (isspace((c = scanner->Next()))) {
+	char c = scanner->Next();
+	while (isspace(c) || !c) {
+		c = scanner->Next();
 #ifdef TOKENIZER_DEBUG
 		printf("Parser skipping a space...\n");
 #endif
-	} // eat spaces  
+	}
+
 
 	if (c == EOF)
 	{
@@ -40,6 +42,7 @@ Token *Tokenizer::Next()
 #endif
 		return nullptr;
 	}
+
 
 	std::string identifier;
 	bool special = false;
@@ -71,7 +74,6 @@ finalize_tok:
 	{
 		tok->tok = tIDENT;
 	}
-	
 	if (identifier == "int")
 	{
 		tok->tok = tINT;
@@ -94,7 +96,7 @@ finalize_tok:
 
 
 #ifdef TOKENIZER_DEBUG
-	printf("Token \"%s\" built (line %d), pushing to states\n", tok->ToString().c_str(), tok->line);
+	printf("Token \"%s\" built (line %d) (tok %d/%c), pushing to states\n", tok->ToString().c_str(), tok->line, tok->tok, tok->tok);
 #endif
 
 	Token *ptr = tok.get();

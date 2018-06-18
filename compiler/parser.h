@@ -16,6 +16,7 @@
 class Parse
 {
 public:
+	StatementList globals;
 	std::vector<Function> functions;
 	std::vector<Native> natives;
 };
@@ -67,6 +68,11 @@ public:
 	 * Parses the arguments for a function or native declaration.
 	 */
 	void DoArguments(ArgumentList *args);
+
+	/**
+	 * Parses a global variable 
+	 */
+	void DoGlobal();
 
 private:
 	std::unique_ptr<::Parse> parse;

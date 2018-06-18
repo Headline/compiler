@@ -18,6 +18,9 @@ void Parser::Parse()
 		}
 
 		switch (tok->tok) {
+		case tINT:
+			DoGlobal();
+			break;
 		case tFUNC:
 			DoFunction();
 			break;
@@ -41,6 +44,37 @@ inline void EatUntilNext(TOK tok, Tokenizer *tokenizer)
 	Token *token;
 	while ((token = tokenizer->Next())->tok != (TOK)tok) {
 	} // keep eating tokens until we hit whatever
+}
+
+void Parser::DoGlobal()
+{
+	assert(tokenizer->Peek(tINT));
+
+	Token *inttok = tokenizer->Next(); // eat int
+
+	Token *ident;
+	if ((ident = tokenizer->Match(tIDENT)) == nullptr)
+	{
+		errorsys->Error(1, inttok->line, "<identifier>"); // expected token <identifier>
+		EatUntilNext((TOK)';', tokenizer.get()); // recover
+		return;
+	}
+
+	Statement statement;
+	statement.declaration = true;
+	statement.lvalue = ident->identifier;
+
+#ifdef PARSER_DEBUG
+	printf("Falling into global declaration.\n");
+#endif
+
+	Token *semi;
+	if ((semi = tokenizer->Match((TOK) ';')) == nullptr) {
+		errorsys->Error(1, ident->line, ";"); // expected token ;
+		return;
+	}
+	
+	parse->globals.list.push_back(statement);
 }
 
 void Parser::DoNative()
