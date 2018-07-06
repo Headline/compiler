@@ -9,7 +9,7 @@ declaration ::= builtin_type <identifier>
 statement_list ::= {statement} ';' {statement_list}
 				| {statement}
 
-function ::= 'func' <identifier> '(' ')' '{' {statement_list} '}'
+function ::= 'func' <builtin_type> <identifier> '(' ')' '{' {statement_list} '}'
 
 native ::= 'native' <identifier> '(' {param_list} ')' ';'
 

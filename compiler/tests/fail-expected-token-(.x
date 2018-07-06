@@ -1,4 +1,4 @@
-func main)
+func int main)
 {
 	int a;
 	a = 4;
