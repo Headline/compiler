@@ -1,6 +1,6 @@
 int a;
 
-func main()
+func int main()
 {
 	a = 4;
 }

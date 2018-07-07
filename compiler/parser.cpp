@@ -181,6 +181,12 @@ void Parser::DoFunction()
 	printf("Falling into function parse\n");
 #endif
 
+	Token *ret;
+	if ((ret = tokenizer->Match(tINT)) == nullptr) {
+		errorsys->Error(1, func->line, "<return type>"); // 
+		return;
+	}
+
 	Token *ident;
 	if ((ident = tokenizer->Match(tIDENT)) == nullptr) {
 		errorsys->Error(1, func->line, "<identifier>"); // expected token <identifier>
