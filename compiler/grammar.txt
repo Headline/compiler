@@ -11,7 +11,7 @@ statement_list ::= {statement} ';' {statement_list}
 
 function ::= 'func' <builtin_type> <identifier> '(' ')' '{' {statement_list} '}'
 
-native ::= 'native' <identifier> '(' {param_list} ')' ';'
+native ::= 'native' <builtin_type> <identifier> '(' {param_list} ')' ';'
 
 param_list ::= declaration (',' declaration)*
 

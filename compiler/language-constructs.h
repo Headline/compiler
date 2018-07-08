@@ -13,6 +13,7 @@ public:
 	std::string var;
 	bool funccall;
 	std::string identifier;
+	int line;
 };
 
 class StatementList
@@ -45,6 +46,7 @@ public:
 class Native
 {
 public:
+	TOK type;
 	std::string identifier;
 	ArgumentList arguments;
 };

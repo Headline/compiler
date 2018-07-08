@@ -1,3 +1,5 @@
+native int someotherfunction();
+
 func int somefunction()
 {
 	int a;

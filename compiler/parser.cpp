@@ -33,6 +33,8 @@ void Parser::Parse()
 	}
 
 end:
+	this->Validate();
+
 	if (errorsys->Fatal()) {
 		errorsys->Spew();
 		exit(EXIT_FAILURE);
@@ -80,19 +82,27 @@ void Parser::DoGlobal()
 void Parser::DoNative()
 {
 	assert(tokenizer->Peek(tNATIVE));
-	Native native;
 
-	Token *func = tokenizer->Next(); // eat native
+	Native native;
+	Token *nat = tokenizer->Next(); // eat native
+
+	Token *type;
+	if ((type = tokenizer->Match(tINT)) == nullptr) {
+		errorsys->Error(1, nat->line, "<type>");
+		EatUntilNext((TOK)';', tokenizer.get()); // recover
+		return;
+	}
+	native.type = type->tok;
 
 	Token *ident;
 	if ((ident = tokenizer->Match(tIDENT)) == nullptr) {
-		errorsys->Error(1, func->line, "<identifier>"); // expected token <identifier>
+		errorsys->Error(1, nat->line, "<identifier>"); // expected token <identifier>
 		EatUntilNext((TOK)';', tokenizer.get()); // recover
 		return;
 	}
 	Token *tok;
 	if ((tok = tokenizer->Match((TOK)'(')) == nullptr) {
-		errorsys->Error(1, func->line, "(");
+		errorsys->Error(1, nat->line, "(");
 		EatUntilNext((TOK)')', tokenizer.get()); // recover
 		return;
 	}
@@ -101,7 +111,7 @@ void Parser::DoNative()
 	DoArguments(&args);
 
 	if ((tok = tokenizer->Match((TOK)')')) == nullptr) {
-		errorsys->Error(1, func->line, ")");
+		errorsys->Error(1, nat->line, ")");
 		return;
 	}
 
@@ -169,7 +179,6 @@ void Parser::DoArguments(ArgumentList *args)
 #ifdef PARSER_DEBUG
 		printf("Argument end. Net token: %c/%i\n", token->tok, token->tok);
 #endif
-
 }
 
 void Parser::DoFunction()
@@ -320,8 +329,8 @@ bool Parser::DoStatement(Statement &statement)
 	}
 
 	statement = Statement(); // we'll wipe whatever else was there
-
 	Token *first = tokenizer->Next();
+	statement.line = first->line;
 	if (first->tok == tIDENT)
 	{
 		Token *next = tokenizer->Next();
@@ -349,6 +358,9 @@ bool Parser::DoStatement(Statement &statement)
 			if (close->tok == (TOK)')') {
 				Token *semicolon = tokenizer->Next(); // eat ;
 				if (semicolon->tok == (TOK)';') {
+#ifdef PARSER_DEBUG
+					printf("Function call \"%s()\" found...\n", first->identifier.c_str());
+#endif
 					statement.funccall = true;
 					statement.identifier = first->identifier;
 				}
@@ -381,4 +393,49 @@ bool Parser::DoStatement(Statement &statement)
 		assert(true);
 	}
 	return true;
+}
+
+inline bool IsValidFunction(std::string identifier, std::vector<Function> &funcs)
+{
+	for (auto func : funcs)
+	{
+		if (func.identifier == identifier)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+inline bool IsValidNative(std::string identifier, std::vector<Native> &natives)
+{
+	for (auto native : natives)
+	{
+		if (native.identifier == identifier)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void Parser::Validate()
+{
+	// ensure all function calls are to things that are defined, or are forward decl'd
+	// as a native.
+	// TODO: Check parameters match as well
+	for (Function func : this->parse->functions)
+	{
+		for (Statement stmt : func.statements.list)
+		{
+			if (stmt.funccall)
+			{
+				if (!IsValidFunction(stmt.identifier, this->parse->functions)
+					&& !IsValidNative(stmt.identifier, this->parse->natives))
+				{
+					errorsys->Error(4, stmt.line, stmt.identifier.c_str());
+				}
+			}
+		}
+	}
 }

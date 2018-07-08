@@ -74,6 +74,12 @@ public:
 	 */
 	void DoGlobal();
 
+	/**
+	 * Further parsing (semantic) analysis to ensure variables are used, functions
+	 * are defined, etc.
+	 */
+	void Validate();
+
 private:
 	std::unique_ptr<::Parse> parse;
 	std::unique_ptr<Tokenizer> tokenizer;

@@ -1,0 +1,1 @@
+[Error] [Line 3]: function definition missing for 'something'
