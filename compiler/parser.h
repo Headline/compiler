@@ -7,6 +7,9 @@
 #include "language-constructs.h"
 
 #include <memory>
+#include <unordered_set>
+
+typedef std::unordered_set<std::string> FuncSet;
 
 /**
  * The parse class is the result of a complete parse built by the parser.
@@ -83,6 +86,7 @@ public:
 private:
 	std::unique_ptr<::Parse> parse;
 	std::unique_ptr<Tokenizer> tokenizer;
+	FuncSet counter;
 	ErrorSys *errorsys;
 };
 

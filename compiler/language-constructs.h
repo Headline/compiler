@@ -41,6 +41,7 @@ public:
 	std::string identifier;
 	StatementList statements;
 	ArgumentList arguments;
+	int line;
 };
 
 class Native

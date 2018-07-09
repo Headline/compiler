@@ -6,8 +6,9 @@
 #include "tokenizer.h"
 
 /**
- * Static list of errors used by ErrorSys to report errors. The index in this
- * array corresponds with the desired error to be displayed by ErrorSys::Error
+ * Static list of errors used by ErrorSys to report errors and warnings. The 
+ * index in this array corresponds with the desired error to be displayed by 
+ * ErrorSys::Error
  */
 static const char * const errors[] = {
 	/* 00 */	"empty statement",
@@ -15,6 +16,9 @@ static const char * const errors[] = {
 	/* 02 */	"unexpected token '%s'",
 	/* 03 */	"expected built-in type, but got '%s'",
 	/* 04 */	"function definition missing for '%s'"
+};
+static const char * const warnings[] = {
+	/* 00 */	"unused function '%s'"
 };
 
 /**
@@ -44,7 +48,13 @@ public:
 	void Error(int error, int lines, ...);
 
 	/**
-	 * Spits out all errors queued to the stdout
+	 * Queues a warning which does not result in a fatal compilation failure, but warns
+	 * the programmer of possible uninteneded mistakes.
+	 */
+	void Warning(int warning, int lines, ...);
+
+	/**
+	 * Spits out all errors queued to the stdout, if any.
 	 */
 	void Spew() const;
 
@@ -55,8 +65,9 @@ public:
 
 private:
 	std::vector<std::string> output;
+	std::vector<std::string> warningoutput;
 	int fatals;
-	int warnings;
+	int warns;
 };
 
 #endif // H_ERROR

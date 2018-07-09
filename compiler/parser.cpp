@@ -35,8 +35,8 @@ void Parser::Parse()
 end:
 	this->Validate();
 
+	errorsys->Spew();
 	if (errorsys->Fatal()) {
-		errorsys->Spew();
 		exit(EXIT_FAILURE);
 	}
 }
@@ -235,7 +235,7 @@ void Parser::DoFunction()
 	Function function;
 	function.statements = list;
 	function.identifier = ident->identifier;
-
+	function.line = ident->line;
 
 	this->parse->functions.push_back(function);
 }
@@ -363,6 +363,8 @@ bool Parser::DoStatement(Statement &statement)
 #endif
 					statement.funccall = true;
 					statement.identifier = first->identifier;
+
+					counter.insert(first->identifier);
 				}
 			}
 		}
@@ -421,11 +423,11 @@ inline bool IsValidNative(std::string identifier, std::vector<Native> &natives)
 
 void Parser::Validate()
 {
-	// ensure all function calls are to things that are defined, or are forward decl'd
-	// as a native.
-	// TODO: Check parameters match as well
 	for (Function func : this->parse->functions)
 	{
+		// ensure all function calls are to things that are defined, or are forward decl'd
+		// as a native.
+		// TODO: Check parameters match as well
 		for (Statement stmt : func.statements.list)
 		{
 			if (stmt.funccall)
@@ -436,6 +438,13 @@ void Parser::Validate()
 					errorsys->Error(4, stmt.line, stmt.identifier.c_str());
 				}
 			}
+		}
+
+		// if the function was never used (it was never inserted into our set)
+		// also, main is special :)
+		if (func.identifier != "main" && counter.find(func.identifier) == counter.end())
+		{
+			errorsys->Warning(0, func.line, func.identifier.c_str());
 		}
 	}
 }
