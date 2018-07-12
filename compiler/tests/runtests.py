@@ -12,8 +12,6 @@ def compare_files(comparisonfile, err):
         lines = []
     else:
         lines = comparisonfile.readlines()
-	
-    err.seek(0)
     complines = err.readlines()
 	
 	# clean filenames from C:\dir\dir\file.txt -> file.txt
@@ -42,10 +40,9 @@ for dirpath, dirnames, filenames in os.walk(path):
         current = dirpath + filename
         if filename.endswith(".x"):
             outfilename = current.replace(".x", ".out")
-            with open(outfilename, 'w+') as err:
-                args = [sys.argv[1], current]
-                p = subprocess.Popen(args, shell=False, stderr=err, stdout=garbage)
-                p.wait()
+            args = [sys.argv[1], '-stderr='+ outfilename, current]
+            p = subprocess.Popen(args, shell=False, stderr=garbage, stdout=garbage)
+            p.wait()
                 
             tryopenname = current.replace(".x", ".txt")
             f = Path(tryopenname)

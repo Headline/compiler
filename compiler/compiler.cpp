@@ -21,21 +21,23 @@ int main(int argc, char *argv[])
 	printf("\n");
 
 #ifndef DEFAULT_TEST_FILE
-	if (argc != 2)
+	if (argc < 2)
 	{
 		fprintf(stderr, "Usage: compiler.exe <filename>\n");
 		return 0;
 	}
-
-	if (!endswith(argv[1], ".x"))
+	if (strncmp(argv[1], "-stderr=", 8) == 0)
+	{
+		if (strlen(argv[1]+8))
+			stderr = freopen(argv[1] + 8, "w+", stderr);
+	}
+	if (!endswith(argv[argc-1], ".x"))
 	{
 		fprintf(stderr, "Error: source file must end in .x");
 		return 0;
 	}
-#endif
 
-#ifndef DEFAULT_TEST_FILE
-	std::unique_ptr<Scanner> scanner = std::make_unique<Scanner>(argv[1]);
+	std::unique_ptr<Scanner> scanner = std::make_unique<Scanner>(argv[argc-1]);
 #else
 	std::unique_ptr<Scanner> scanner = std::make_unique<Scanner>("test.x");
 #endif
