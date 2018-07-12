@@ -115,7 +115,7 @@ private:
 class TempToken {
 public:
 	TempToken(Tokenizer *tokenizer)
-		: t(tokenizer->Next()), tokenizer(tokenizer) {
+		: tokenizer(tokenizer), t(tokenizer->Next()) {
 	}
 	~TempToken() {
 		tokenizer->Back();

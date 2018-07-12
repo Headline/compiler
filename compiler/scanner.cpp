@@ -7,8 +7,11 @@ Scanner::Scanner(const char *filename) : in(fin)
 	if (!fin.good())
 	{
 		char error[255];
+#ifdef __APPLE__
+		strerror_r(errno, error, sizeof(error));
+#else
 		strerror_s(error, sizeof(error), errno);
-		
+#endif
 		printf("// Error: %s: \"%s\"\n", error, filename);
 		exit(EXIT_FAILURE);
 	}

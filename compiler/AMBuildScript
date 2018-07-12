@@ -5,16 +5,18 @@ if cxx.like('gcc'):
       '-pipe',
       '-fno-strict-aliasing',
       '-Wall',
-      '-Werror',
       '-Wno-unused',
       '-Wno-switch',
       '-Wno-array-bounds',
       '-msse',
       '-fvisibility=hidden',
+      '-std=c++1z',
+      '-Werror',
     ]
 elif cxx.like('msvc'):
 	cxx.cflags += [
 	  '-EHsc',
+    '-std=c++1z',
 	]
 
 if builder.options.default:
