@@ -1,6 +1,9 @@
 #ifndef H_DEBUG // double include protection
 #define H_DEBUG
 
+/*
+ * Platform dependent definitions
+ */
 #if defined __WIN32 || defined __WIN64
 #define PLATFORM_WINDOWS
 #endif
