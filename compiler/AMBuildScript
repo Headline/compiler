@@ -16,7 +16,7 @@ if cxx.like('gcc'):
 elif cxx.like('msvc'):
 	cxx.cflags += [
 	  '-EHsc',
-    '-std=c++1z',
+    '-std:c++latest',
 	]
 
 if builder.options.default:
