@@ -7,10 +7,7 @@
 #include <vector>
 #include <cassert>
 #include <fstream>
-
-#ifdef PLATFORM_LINUX
-#include <stdlib.h>
-#endif
+#include <string.h>
 
 /**
  * CharFetcher is our method for grabbing the input file one line at a time,
