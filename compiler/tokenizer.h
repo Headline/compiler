@@ -97,7 +97,7 @@ public:
 private:
 	std::unique_ptr<Scanner> scanner;
 	std::vector<std::unique_ptr<Token>> states;
-	int pos;
+	size_t pos;
 };
 
 
