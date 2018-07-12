@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 #ifndef DEFAULT_TEST_FILE
 	if (argc != 2)
 	{
-		printf("Usage: compiler.exe <filename>\n");
+		fprintf(stderr, "Usage: compiler.exe <filename>\n");
 		return 0;
 	}
 

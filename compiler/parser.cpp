@@ -1,7 +1,7 @@
 #include "parser.h"
 
 Parser::Parser(std::unique_ptr<Tokenizer> &tokenizer, ErrorSys *errorsys)
-	: tokenizer(std::move(tokenizer)), parse(std::make_unique<::Parse>())
+	: parse(std::make_unique<::Parse>()), tokenizer(std::move(tokenizer))
 {
 	this->errorsys = errorsys;
 }
@@ -152,7 +152,7 @@ void Parser::DoArguments(ArgumentList *args)
 
 
 		if (!tokenizer->IsBuiltinType(tok->tok)) {
-			errorsys->Error(3, tok->line, tok->identifier); // expected token <identifier>
+			errorsys->Error(3, tok->line, tok->identifier.c_str()); // expected token <identifier>
 
 			EatUntilNext((TOK)';', tokenizer.get()); // recover
 			return;
@@ -170,7 +170,7 @@ void Parser::DoArguments(ArgumentList *args)
 		arg.identifier = identifier->identifier;
 		args->arguments.push_back(arg);
 
-		if (another = tokenizer->Peek((TOK)',')) {
+		if ((another = tokenizer->Peek((TOK)','))) {
 			tokenizer->Next(); // eat ','
 		}
 	}
@@ -304,14 +304,14 @@ void Parser::DoStatements(StatementList *list)
 	while (IsStatement(tokenizer.get())) {
 		if (DoStatement(statement)) {
 #ifdef PARSER_DEBUG
-			printf("Statement found, assign: %d\n", statement.assignment);
+			printf("Statement found, assign: %d\n", (int)statement.assignment);
 #endif
 			list->list.push_back(statement);
 		}
 	}
 
 #ifdef PARSER_DEBUG
-	printf("Statements parsed... %d found\n", list->list.size());
+	printf("Statements parsed... %d found\n", (int)list->list.size());
 #endif
 
 	if ((tok = tokenizer->Match((TOK)'}')) == nullptr) {
