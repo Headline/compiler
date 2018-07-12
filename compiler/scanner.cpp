@@ -7,7 +7,7 @@ Scanner::Scanner(const char *filename) : in(fin)
 	if (!fin.good())
 	{
 		char error[255];
-#ifdef __APPLE__
+#if defined PLATFORM_APPLE || PLATFORM_LINUX
 		strerror_r(errno, error, sizeof(error));
 #else
 		strerror_s(error, sizeof(error), errno);

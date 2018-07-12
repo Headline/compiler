@@ -100,7 +100,7 @@ private:
 	CharFetcher in;
 	std::ifstream fin;
 	std::vector<char> chars;
-	int pos;
+	size_t pos;
 };
 
 #endif // H_SCANNER
