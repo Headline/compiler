@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	if (strncmp(argv[1], "-stderr=", 8) == 0)
 	{
 		if (strlen(argv[1]+8))
-			stderr = freopen(argv[1] + 8, "w+", stderr);
+			freopen(argv[1] + 8, "w+", stderr);
 	}
 	if (!endswith(argv[argc-1], ".x"))
 	{
