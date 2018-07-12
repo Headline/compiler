@@ -15,3 +15,6 @@ script:
   - python ../configure.py
   - echo "Building..."
   - ambuild
+  - sudo pip install pathlib
+  - cd ../tests
+  - python runtests.py ./../build/compiler/compiler
