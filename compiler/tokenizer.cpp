@@ -9,7 +9,7 @@ Tokenizer::Tokenizer(std::unique_ptr<Scanner> &scanner)
 inline bool isspecialtoken(char tok)
 {
 	static const char constarr[] = { ';', '(', ')', '{', '}', '=', ',' };
-	for (int i = 0; i < sizeof(constarr); ++i) {
+	for (size_t i = 0; i < sizeof(constarr); ++i) {
 		if (tok == constarr[i])
 			return true;
 	}

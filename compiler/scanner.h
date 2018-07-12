@@ -7,7 +7,7 @@
 #include <vector>
 #include <cassert>
 #include <fstream>
-
+#include <string.h>
 
 /**
  * CharFetcher is our method for grabbing the input file one line at a time,
@@ -100,7 +100,7 @@ private:
 	CharFetcher in;
 	std::ifstream fin;
 	std::vector<char> chars;
-	int pos;
+	size_t pos;
 };
 
 #endif // H_SCANNER

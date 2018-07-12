@@ -1,0 +1,36 @@
+cxx = builder.DetectCxx()
+
+if cxx.like('gcc'):
+    cxx.cflags += [
+      '-pipe',
+      '-fno-strict-aliasing',
+      '-Wall',
+      '-Wno-unused',
+      '-Wno-switch',
+      '-Wno-array-bounds',
+      '-msse',
+      '-fvisibility=hidden',
+      '-std=c++1z',
+      '-Werror',
+    ]
+elif cxx.like('msvc'):
+	cxx.cflags += [
+	  '-EHsc',
+    '-std:c++latest',
+	]
+
+if builder.options.default:
+	cxx.defines += ['DEFAULT_TEST_FILE']
+if builder.options.debugall:
+	cxx.defines += ['DEBUG_ALL']
+
+program = builder.cxx.Program('compiler')
+program.sources += [
+  'compiler.cpp',
+  'error.cpp',
+  'parser.cpp',
+  'tokenizer.cpp',
+  'scanner.cpp'
+]
+
+builder.Add(program)

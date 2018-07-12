@@ -97,7 +97,7 @@ public:
 private:
 	std::unique_ptr<Scanner> scanner;
 	std::vector<std::unique_ptr<Token>> states;
-	int pos;
+	size_t pos;
 };
 
 
@@ -115,7 +115,7 @@ private:
 class TempToken {
 public:
 	TempToken(Tokenizer *tokenizer)
-		: t(tokenizer->Next()), tokenizer(tokenizer) {
+		: tokenizer(tokenizer), t(tokenizer->Next()) {
 	}
 	~TempToken() {
 		tokenizer->Back();
