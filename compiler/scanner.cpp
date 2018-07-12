@@ -36,7 +36,7 @@ char Scanner::Next()
 		chars.push_back(in.Get()); // grabs the next char from CharFetcher & pushes to next pos
 	}
 	
-	if (pos != chars.size())
+	if (pos < chars.size())
 		return chars[pos++];
 	else
 		return EOF;

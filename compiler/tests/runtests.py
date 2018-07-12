@@ -35,20 +35,17 @@ def compare_files(comparisonfile, err):
 failure = 0
 start = time.time()
 path = os.path.realpath(__file__).replace(sys.argv[0], "")
+garbage, name = tempfile.mkstemp()
 
 for dirpath, dirnames, filenames in os.walk(path):
     for filename in filenames:
-        current = dirpath + '\\' + filename
+        current = dirpath + filename
         if filename.endswith(".x"):
             outfilename = current.replace(".x", ".out")
             with open(outfilename, 'w+') as err:
                 args = [sys.argv[1], current]
-
-                garbage, name = tempfile.mkstemp()
-                p = subprocess.Popen(args, shell=True, stderr=err, stdout=garbage)
+                p = subprocess.Popen(args, shell=False, stderr=err, stdout=garbage)
                 p.wait()
-
-                os.close(garbage)
                 
             tryopenname = current.replace(".x", ".txt")
             f = Path(tryopenname)
@@ -62,6 +59,7 @@ for dirpath, dirnames, filenames in os.walk(path):
                     
             os.unlink(outfilename) # remove .out, lets not be messy
            
+os.close(garbage)
 end = time.time()
 time = '%.2f'%(end-start)
 if failure > 0:
