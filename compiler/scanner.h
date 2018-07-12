@@ -9,7 +9,7 @@
 #include <fstream>
 
 #ifdef PLATFORM_LINUX
-#include <errno.h>
+#include <stdlib.h>
 #endif
 
 /**
