@@ -12,6 +12,16 @@ A basic compiler for a scripting language named Language X. This language is C-l
 - Like this projects inspiriation, it is typeless. The only type is the 32-bit integer `int`
 - This project will always be backwards compatable, meaning old scripts will never break
 
+## Build Instructions
+#### Dependencies
+ - [AMBuild](https://github.com/alliedmodders/ambuild)
+#### Instructions
+Once AMBuild is installed on your system, compilation is easy. Compiler wise, clang, gcc, and msvc are all supported.
+- cd to the compiler folder in this project
+- mkdir build && cd build
+- python ../configure.py
+- ambuild
+
 ## Usage
 Beauty is in the eye of the beholder and this project is no exception to that. While crude, this project's is intended to run *very* quickly, with performance and ease-of-use as it's first and second priorities. As development continues, more documentation will be created & guides will be released with instruction on how to embed the language into your use-case.
 
