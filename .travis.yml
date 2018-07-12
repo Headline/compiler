@@ -1,0 +1,16 @@
+language: cpp
+os:osx
+sudo: true
+before_script:
+  - git clone https://github.com/alliedmodders/ambuild
+  - cd ambuild && python setup.py install
+  - echo "ambuild has been installed..."
+  - cd ..
+script:
+  - cd compiler/
+  - echo "Creating build directory"
+  - mkdir build && cd build
+  - echo "Configuring build"
+  - python ../configure.py
+  - echo "Building..."
+  - ambuild
