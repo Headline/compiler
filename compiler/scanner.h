@@ -8,6 +8,9 @@
 #include <cassert>
 #include <fstream>
 
+#ifdef PLATFORM_LINUX
+#include <errno.h>
+#endif
 
 /**
  * CharFetcher is our method for grabbing the input file one line at a time,
