@@ -1,4 +1,9 @@
-# Language X [![Build status](https://ci.appveyor.com/api/projects/status/xe77ex6oxl497xjm/branch/master?svg=true)](https://ci.appveyor.com/project/Headline22/compiler/branch/master)
+# Language X 
+### Win : [![Build status](https://ci.appveyor.com/api/projects/status/xe77ex6oxl497xjm/branch/master?svg=true)](https://ci.appveyor.com/project/Headline22/compiler/branch/master)
+
+### Lin : [![Build status](https://ci.appveyor.com/api/projects/status/jmyjt6k511y0xqdy?svg=true)](https://ci.appveyor.com/project/Headline22/compiler-xoo5i)
+
+### Mac : [![Build status](https://travis-ci.org/Headline/compiler.svg?branch=master)](https://travis-ci.org/Headline/compiler)
 
 ## Description
 A basic compiler for a scripting language named Language X. This language is C-like, and is designed to be easy to learn for beginners. While it's functionality is currently limited, it will have the following properties.
