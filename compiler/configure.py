@@ -16,5 +16,7 @@ builder.options.add_option('--default-script', action='store_true', dest='defaul
                         help='Hardcodes test.x as the compilation script')
 builder.options.add_option('--debug-all', action='store_true', dest='debugall', default=False,
                         help='Enables all debug prints')
+builder.options.add_option('--debug-parser', action='store_true', dest='debugparser', default=False,
+                        help='Enables parser debug prints')
 
 builder.Configure()

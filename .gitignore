@@ -1,2 +1,3 @@
 ##ambuild
 compiler/build/
+compiler/tests/*.exe
