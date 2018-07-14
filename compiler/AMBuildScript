@@ -11,7 +11,7 @@ if cxx.like('gcc'):
 elif cxx.like('msvc'):
 	cxx.cflags += [
 	  '-EHsc',
-    '-Wall',
+    '-W4',
     '-WX',
     '-std:c++latest',
 	]
