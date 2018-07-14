@@ -45,7 +45,6 @@ Token *Tokenizer::Next()
 
 
 	std::string identifier;
-	bool special = false;
 	do
 	{
 		if (c == EOF)

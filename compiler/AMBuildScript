@@ -3,19 +3,16 @@ cxx = builder.DetectCxx()
 if cxx.like('gcc'):
     cxx.cflags += [
       '-pipe',
-      '-fno-strict-aliasing',
       '-Wall',
-      '-Wno-unused',
-      '-Wno-switch',
-      '-Wno-array-bounds',
-      '-msse',
+      '-Werror',
       '-fvisibility=hidden',
       '-std=c++1z',
-      '-Werror',
     ]
 elif cxx.like('msvc'):
 	cxx.cflags += [
 	  '-EHsc',
+    '-Wall',
+    '-Wex',
     '-std:c++latest',
 	]
 
