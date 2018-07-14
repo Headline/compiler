@@ -4,7 +4,7 @@
 /*
  * Platform dependent definitions
  */
-#if defined __WIN32 || defined __WIN64
+#if defined _WIN32 || defined _WIN64
 #define PLATFORM_WINDOWS
 #endif
 

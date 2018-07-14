@@ -2,6 +2,7 @@
 #include <fstream>
 #include <memory>
 
+#include "debug.h"
 #include "scanner.h"
 #include "tokenizer.h"
 #include "parser.h"
@@ -29,7 +30,14 @@ int main(int argc, char *argv[])
 	if (strncmp(argv[1], "-stderr=", 8) == 0)
 	{
 		if (strlen(argv[1]+8))
+		{
+#ifdef PLATFORM_WINDOWS
+			FILE *junk = nullptr;
+			freopen_s(&junk, argv[1] + 8, "w+", stderr);
+#else
 			freopen(argv[1] + 8, "w+", stderr);
+#endif
+		}
 	}
 	if (!endswith(argv[argc-1], ".x"))
 	{

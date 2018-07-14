@@ -170,7 +170,8 @@ void Parser::DoArguments(ArgumentList *args)
 		arg.identifier = identifier->identifier;
 		args->arguments.push_back(arg);
 
-		if ((another = tokenizer->Peek((TOK)','))) {
+		another = tokenizer->Peek((TOK)',');
+		if (another) {
 			tokenizer->Next(); // eat ','
 		}
 	}
