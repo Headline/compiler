@@ -12,7 +12,7 @@ elif cxx.like('msvc'):
 	cxx.cflags += [
 	  '-EHsc',
     '-Wall',
-    '-Wex',
+    '-WX',
     '-std:c++latest',
 	]
 
