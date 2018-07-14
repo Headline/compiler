@@ -123,12 +123,12 @@ public:
 	Token *operator ->() const {
 		return t;
 	}
-	TempToken &operator =(Tokenizer *tokenizer) {
+	TempToken &operator =(Tokenizer *tok) {
 		if (t != nullptr)
-			tokenizer->Back();
+			tok->Back();
 
-		this->tokenizer = tokenizer;
-		this->t = tokenizer->Next();
+		this->tokenizer = tok;
+		this->t = tok->Next();
 
 		return *this;
 	}

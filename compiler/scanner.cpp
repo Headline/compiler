@@ -21,12 +21,12 @@ Scanner::Scanner(const char *filename) : in(fin), pos(0)
 #endif
 }
 
-bool Scanner::Peek(char in)
+bool Scanner::Peek(char input)
 {
 	char temp = this->Next();
 	this->Back();
 
-	return temp == in;
+	return temp == input;
 }
 
 char Scanner::Next()
