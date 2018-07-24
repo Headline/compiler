@@ -46,8 +46,8 @@ public:
 	AssignmentStmt(int line, std::string lvalue, Node<Evaluable> *rvalue)
 					: line(line), lvalue(lvalue), rvalue(rvalue) {};
 
-	StatementType Type() {
-		return Assignment;
+	StatementType Type() override {
+		return StatementType::Assignment;
 	}
 
 	int line;
@@ -59,8 +59,8 @@ class DeclarationStmt : public Statement
 {
 public:
 	DeclarationStmt(int line, std::string var) : line(line), var(var) {};
-	StatementType Type() {
-		return Declaration;
+	StatementType Type() override {
+		return StatementType::Declaration;
 	}
 	int line;
 	std::string var;
@@ -70,8 +70,8 @@ class FuncCallStmt : public Statement
 {
 public:
 	FuncCallStmt(int line, std::string identifier) : line(line), identifier(identifier) {};
-	StatementType Type() {
-		return FunctionCall;
+	StatementType Type() override {
+		return StatementType::FunctionCall;
 	}
 	int line;
 	std::string identifier;
@@ -109,6 +109,15 @@ public:
 		for (auto *ptr : list)
 			delete ptr;
 	}
+    StatementList &operator=(const StatementList &other) // copy assignment
+    {
+    	list.clear();
+    	for (auto *ptr : other.list)
+    	{
+    		list.push_back(ptr);
+    	}
+        return *this;
+    }
 	std::vector<Statement*> list;
 };
 

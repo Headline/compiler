@@ -226,13 +226,11 @@ void Parser::DoFunction()
 	// we'll give the '{' back to the tokenizer and fall into ParseStatement
 	tokenizer->Back();
 
-	StatementList list;
-	DoStatements(&list);
+	Function *function = new Function();
+	DoStatements(&function->statements);
 
-	Function function;
-	function.statements = list;
-	function.identifier = ident->identifier;
-	function.line = ident->line;
+	function->identifier = ident->identifier;
+	function->line = ident->line;
 
 	this->parse->functions.push_back(function);
 }
@@ -301,7 +299,7 @@ void Parser::DoStatements(StatementList *list)
 	while (IsStatement(tokenizer.get())) {
 		if (DoStatement(&statement)) {
 #ifdef PARSER_DEBUG
-			printf("Statement found, assign: %d\n", (int)statement.assignment);
+			printf("Statement found");
 #endif
 			list->list.push_back(statement);
 		}
@@ -365,6 +363,7 @@ bool Parser::DoStatement(Statement **statement)
 					*statement = new FuncCallStmt(line, first->identifier);
 					return true;
 				}
+				return false;
 			}
 		}
 	}
@@ -389,20 +388,15 @@ bool Parser::DoStatement(Statement **statement)
 		*statement = new DeclarationStmt(line, identifier->identifier);
 		return true;
 	}
-	else
-	{
-		assert(false);
-	}
 
-	*statement = nullptr;
-	return true;
+	return false;
 }
 
-inline bool IsValidFunction(std::string identifier, std::vector<Function> &funcs)
+inline bool IsValidFunction(const std::string &identifier, const std::vector<Function*> &funcs)
 {
 	for (auto func : funcs)
 	{
-		if (func.identifier == identifier)
+		if (func->identifier == identifier)
 		{
 			return true;
 		}
@@ -410,7 +404,7 @@ inline bool IsValidFunction(std::string identifier, std::vector<Function> &funcs
 	return false;
 }
 
-inline bool IsValidNative(std::string identifier, std::vector<Native> &natives)
+inline bool IsValidNative(const std::string &identifier, const std::vector<Native> &natives)
 {
 	for (auto native : natives)
 	{
@@ -424,17 +418,17 @@ inline bool IsValidNative(std::string identifier, std::vector<Native> &natives)
 
 void Parser::Validate()
 {
-	for (Function func : this->parse->functions)
+	for (Function *func : this->parse->functions)
 	{
 		// ensure all function calls are to things that are defined, or are forward decl'd
 		// as a native.
 		// TODO: Check parameters match as well
-		for (Statement *statement : func.statements.list)
+		for (Statement *statement : func->statements.list)
 		{
+			assert(statement);
 			if (statement->Type() == Statement::StatementType::FunctionCall)
 			{
 				FuncCallStmt *stmt = dynamic_cast<FuncCallStmt *>(statement);
-
 				if (!IsValidFunction(stmt->identifier, this->parse->functions)
 					&& !IsValidNative(stmt->identifier, this->parse->natives))
 				{
@@ -445,9 +439,9 @@ void Parser::Validate()
 
 		// if the function was never used (it was never inserted into our set)
 		// also, main is special :)
-		if (func.identifier != "main" && counter.find(func.identifier) == counter.end())
+		if (func->identifier != "main" && counter.find(func->identifier) == counter.end())
 		{
-			errorsys->Warning(0, func.line, func.identifier.c_str());
+			errorsys->Warning(0, func->line, func->identifier.c_str());
 		}
 	}
 }

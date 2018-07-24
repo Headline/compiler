@@ -19,8 +19,12 @@ typedef std::unordered_set<std::string> FuncSet;
 class Parse
 {
 public:
+	~Parse() {
+		for (auto *ptr : functions)
+			delete ptr;
+	}
 	StatementList globals;
-	std::vector<Function> functions;
+	std::vector<Function *> functions;
 	std::vector<Native> natives;
 };
 
