@@ -2,24 +2,114 @@
 #define H_LANGUAGE_CONSTRUCTS
 
 #include <vector>
+#include <memory>
+
+
+template <typename T> class Node;
+
+class Evaluable {
+
+};
+
+class EvalDigit : public Evaluable
+{
+public:
+	int value;
+};
+
+class EvalVar : public Evaluable
+{
+public:
+	EvalVar(std::string var) : var(var){};
+	std::string var;
+};
 
 class Statement
 {
 public:
-	bool assignment;
-	std::string lvalue;
-	std::string rvalue;
-	bool declaration;
-	std::string var;
-	bool funccall;
-	std::string identifier;
+	enum StatementType {
+		None,
+		Assignment,
+		Declaration,
+		FunctionCall
+	};
+	virtual ~Statement(){};
+public:
+	virtual StatementType Type() {
+		return None;
+	} 
+};
+
+class AssignmentStmt : public Statement
+{
+public:
+	AssignmentStmt(int line, std::string lvalue, Node<Evaluable> *rvalue)
+					: line(line), lvalue(lvalue), rvalue(rvalue) {};
+
+	StatementType Type() {
+		return Assignment;
+	}
+
 	int line;
+	std::string lvalue;
+	std::unique_ptr<Node<Evaluable>> rvalue;
+};
+
+class DeclarationStmt : public Statement
+{
+public:
+	DeclarationStmt(int line, std::string var) : line(line), var(var) {};
+	StatementType Type() {
+		return Declaration;
+	}
+	int line;
+	std::string var;
+};
+
+class FuncCallStmt : public Statement
+{
+public:
+	FuncCallStmt(int line, std::string identifier) : line(line), identifier(identifier) {};
+	StatementType Type() {
+		return FunctionCall;
+	}
+	int line;
+	std::string identifier;
+};
+
+template <typename T>
+class Node
+{
+public:
+	Node(T t) : _t(t), _lhs(nullptr), _rhs(nullptr) {
+	}
+
+	inline T get() {
+		return _t;
+	}
+	inline void setlhs(Node *lhs) {
+		_lhs = lhs;
+	}
+	inline void setrhs(Node *rhs) {
+		_rhs = rhs;
+	}
+private:
+	T _t;
+	std::unique_ptr<Node> _lhs;
+	std::unique_ptr<Node> _rhs;
 };
 
 class StatementList
 {
 public:
-	std::vector<Statement> list;
+	StatementList() {
+
+	};
+	~StatementList() {
+		for (auto *ptr : list)
+			delete ptr;
+	}
+	std::vector<Statement*> list;
 };
 
 class Argument
@@ -51,4 +141,5 @@ public:
 	std::string identifier;
 	ArgumentList arguments;
 };
+
 #endif // H_LANGUAGE_CONSTRUCTS

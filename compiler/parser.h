@@ -60,7 +60,7 @@ public:
 	 * Parses a statement, and stores the representation in the statement provided.
 	 * Returns true if the statement is syntax valid and the parameter was populated.
 	 */
-	bool DoStatement(Statement &statement);
+	bool DoStatement(Statement **statement);
 
 	/**
 	 * Parses a native declaration.
