@@ -1,6 +1,8 @@
 #ifndef H_TOKENIZER // double include protection
 #define H_TOKENIZER
 
+#include <memory>
+
 #include "debug.h"
 #include "scanner.h"
 
