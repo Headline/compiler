@@ -62,10 +62,6 @@ void Parser::DoGlobal()
 		return;
 	}
 
-	Statement statement;
-	statement.declaration = true;
-	statement.lvalue = ident->identifier;
-
 #ifdef PARSER_DEBUG
 	printf("Falling into global declaration.\n");
 #endif
@@ -76,7 +72,7 @@ void Parser::DoGlobal()
 		return;
 	}
 	
-	parse->globals.list.push_back(statement);
+	parse->globals.list.push_back(new DeclarationStmt(ident->line, ident->identifier));
 }
 
 void Parser::DoNative()
@@ -230,13 +226,11 @@ void Parser::DoFunction()
 	// we'll give the '{' back to the tokenizer and fall into ParseStatement
 	tokenizer->Back();
 
-	StatementList list;
-	DoStatements(&list);
+	Function *function = new Function();
+	DoStatements(&function->statements);
 
-	Function function;
-	function.statements = list;
-	function.identifier = ident->identifier;
-	function.line = ident->line;
+	function->identifier = ident->identifier;
+	function->line = ident->line;
 
 	this->parse->functions.push_back(function);
 }
@@ -301,11 +295,11 @@ void Parser::DoStatements(StatementList *list)
 		return;
 	}
 
-	Statement statement;
+	Statement *statement;
 	while (IsStatement(tokenizer.get())) {
-		if (DoStatement(statement)) {
+		if (DoStatement(&statement)) {
 #ifdef PARSER_DEBUG
-			printf("Statement found, assign: %d\n", (int)statement.assignment);
+			printf("Statement found");
 #endif
 			list->list.push_back(statement);
 		}
@@ -321,7 +315,7 @@ void Parser::DoStatements(StatementList *list)
 	}
 }
 
-bool Parser::DoStatement(Statement &statement)
+bool Parser::DoStatement(Statement **statement)
 {
 	if (tokenizer->Peek((TOK)';')) // empty statement
 	{
@@ -329,18 +323,18 @@ bool Parser::DoStatement(Statement &statement)
 		return false; // should be effective error recovery
 	}
 
-	statement = Statement(); // we'll wipe whatever else was there
 	Token *first = tokenizer->Next();
-	statement.line = first->line;
+	int line = first->line;
 	if (first->tok == tIDENT)
 	{
 		Token *next = tokenizer->Next();
 		if (next->tok == (TOK)'=') {
-			statement.lvalue = first->identifier;
-			statement.assignment = true;
 			Token *value = tokenizer->Next();
 			if (value->tok == tVAL) {
-				statement.rvalue = value->identifier;
+
+				EvalVar var(value->identifier);
+				*statement = new AssignmentStmt(line, first->identifier, new Node<Evaluable>((EvalVar)var));
+
 				Token *semicolon = tokenizer->Next();
 				if (semicolon->tok != (TOK)';') {
 
@@ -348,6 +342,7 @@ bool Parser::DoStatement(Statement &statement)
 					errorsys->Error(1, semicolon->line, ";");
 					return false;
 				}
+				return true;
 			}
 			else {
 				EatUntilNext((TOK)';', tokenizer.get()); // recover
@@ -355,18 +350,20 @@ bool Parser::DoStatement(Statement &statement)
 			}
 		}
 		else if (next->tok == (TOK)'(') { // function call
+			// TODO params
 			Token *close = tokenizer->Next();
 			if (close->tok == (TOK)')') {
 				Token *semicolon = tokenizer->Next(); // eat ;
+
 				if (semicolon->tok == (TOK)';') {
 #ifdef PARSER_DEBUG
 					printf("Function call \"%s()\" found...\n", first->identifier.c_str());
 #endif
-					statement.funccall = true;
-					statement.identifier = first->identifier;
-
 					counter.insert(first->identifier);
+					*statement = new FuncCallStmt(line, first->identifier);
+					return true;
 				}
+				return false;
 			}
 		}
 	}
@@ -388,21 +385,18 @@ bool Parser::DoStatement(Statement &statement)
 			return false;
 		}
 
-		statement.declaration = true;
-		statement.var = identifier->identifier;
+		*statement = new DeclarationStmt(line, identifier->identifier);
+		return true;
 	}
-	else
-	{
-		assert(true);
-	}
-	return true;
+
+	return false;
 }
 
-inline bool IsValidFunction(std::string identifier, std::vector<Function> &funcs)
+inline bool IsValidFunction(const std::string &identifier, const std::vector<Function*> &funcs)
 {
 	for (auto func : funcs)
 	{
-		if (func.identifier == identifier)
+		if (func->identifier == identifier)
 		{
 			return true;
 		}
@@ -410,7 +404,7 @@ inline bool IsValidFunction(std::string identifier, std::vector<Function> &funcs
 	return false;
 }
 
-inline bool IsValidNative(std::string identifier, std::vector<Native> &natives)
+inline bool IsValidNative(const std::string &identifier, const std::vector<Native> &natives)
 {
 	for (auto native : natives)
 	{
@@ -424,28 +418,30 @@ inline bool IsValidNative(std::string identifier, std::vector<Native> &natives)
 
 void Parser::Validate()
 {
-	for (Function func : this->parse->functions)
+	for (Function *func : this->parse->functions)
 	{
 		// ensure all function calls are to things that are defined, or are forward decl'd
 		// as a native.
 		// TODO: Check parameters match as well
-		for (Statement stmt : func.statements.list)
+		for (Statement *statement : func->statements.list)
 		{
-			if (stmt.funccall)
+			assert(statement);
+			if (statement->Type() == Statement::StatementType::FunctionCall)
 			{
-				if (!IsValidFunction(stmt.identifier, this->parse->functions)
-					&& !IsValidNative(stmt.identifier, this->parse->natives))
+				FuncCallStmt *stmt = dynamic_cast<FuncCallStmt *>(statement);
+				if (!IsValidFunction(stmt->identifier, this->parse->functions)
+					&& !IsValidNative(stmt->identifier, this->parse->natives))
 				{
-					errorsys->Error(4, stmt.line, stmt.identifier.c_str());
+					errorsys->Error(4, stmt->line, stmt->identifier.c_str());
 				}
 			}
 		}
 
 		// if the function was never used (it was never inserted into our set)
 		// also, main is special :)
-		if (func.identifier != "main" && counter.find(func.identifier) == counter.end())
+		if (func->identifier != "main" && counter.find(func->identifier) == counter.end())
 		{
-			errorsys->Warning(0, func.line, func.identifier.c_str());
+			errorsys->Warning(0, func->line, func->identifier.c_str());
 		}
 	}
 }

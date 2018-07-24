@@ -19,8 +19,12 @@ typedef std::unordered_set<std::string> FuncSet;
 class Parse
 {
 public:
+	~Parse() {
+		for (auto *ptr : functions)
+			delete ptr;
+	}
 	StatementList globals;
-	std::vector<Function> functions;
+	std::vector<Function *> functions;
 	std::vector<Native> natives;
 };
 
@@ -60,7 +64,7 @@ public:
 	 * Parses a statement, and stores the representation in the statement provided.
 	 * Returns true if the statement is syntax valid and the parameter was populated.
 	 */
-	bool DoStatement(Statement &statement);
+	bool DoStatement(Statement **statement);
 
 	/**
 	 * Parses a native declaration.
