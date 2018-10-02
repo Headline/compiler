@@ -1,7 +1,7 @@
 #include "tokenizer.h"
 
-Tokenizer::Tokenizer(std::unique_ptr<Scanner> &&scanner)
-	: scanner(std::move(scanner))
+Tokenizer::Tokenizer(Scanner &scanner)
+	: scanner(scanner)
 {
 	pos = 0;
 }
@@ -26,9 +26,9 @@ Token *Tokenizer::Next()
 
 	auto tok = std::make_unique<Token>();
 	
-	char c = scanner->Next();
+	char c = scanner.Next();
 	while (isspace(c) || !c) {
-		c = scanner->Next();
+		c = scanner.Next();
 #ifdef TOKENIZER_DEBUG
 		printf("Parser skipping a space...\n");
 #endif
@@ -60,11 +60,11 @@ Token *Tokenizer::Next()
 
 		identifier.append(1, c);
 
-	} while (!isspace((c = scanner->Next())) && !isspecialtoken(c)); // keep eating until we get another space or special token
+	} while (!isspace((c = scanner.Next())) && !isspecialtoken(c)); // keep eating until we get another space or special token
 	
 	if (isspecialtoken(c)) // we hit a special on accident, lets remove it from the thing
 	{
-		scanner->Back(); // step scanner back
+		scanner.Back(); // step scanner back
 	}
 
 finalize_tok:
@@ -90,7 +90,7 @@ finalize_tok:
 		tok->tok = tVAL;
 	}
 
-	tok->line = scanner->GetLineNumber();
+	tok->line = scanner.GetLineNumber();
 	tok->identifier = identifier;
 
 
@@ -112,13 +112,13 @@ void Tokenizer::Back()
 
 bool Tokenizer::Peek(TOK tok)
 {
-	TempToken token = this;
+	TempToken token(*this);
 	return token->tok == tok;
 }
 
-Scanner const *Tokenizer::GetScanner()
+Scanner const &Tokenizer::GetScanner()
 {
-	return scanner.get();
+	return scanner;
 }
 
 Token *Tokenizer::Match(TOK token)

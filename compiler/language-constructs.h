@@ -105,7 +105,7 @@ public:
 	StatementList() {
 
 	};
-	void add(std::unique_ptr<Statement> && statement) {
+	void add(std::unique_ptr<Statement> statement) {
 		list.push_back(std::move(statement));
 	}
 	std::vector<std::unique_ptr<Statement>> list;

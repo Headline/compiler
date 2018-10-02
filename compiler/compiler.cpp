@@ -49,13 +49,13 @@ int main()
 		return 0;
 	}
 
-	std::unique_ptr<Scanner> scanner = std::make_unique<Scanner>(argv[argc-1]);
+	Scanner scanner(argv[argc-1]);
 #else
-	std::unique_ptr<Scanner> scanner = std::make_unique<Scanner>("test.x");
+	Scanner scanner("test.x");
 #endif
-	std::unique_ptr<Tokenizer> tokenizer = std::make_unique<Tokenizer>(std::move(scanner));
-	std::unique_ptr<ErrorSys> errsys = std::make_unique<ErrorSys>();
-	std::unique_ptr<Parser> parser = std::make_unique<Parser>(std::move(tokenizer), errsys.get());
+	Tokenizer tokenizer(scanner);
+	ErrorSys errsys;
+	Parser parser(tokenizer, errsys);
 
-	parser->Parse();
+	parser.Parse();
 }

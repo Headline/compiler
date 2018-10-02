@@ -55,7 +55,7 @@ public:
 	 * Creates the tokenizer, we give the tokenizer our scanner.
 	 * The tokenizer is now the owner of the scanner (std::move)
 	 */
-	Tokenizer(std::unique_ptr<Scanner> &&scanner);
+	Tokenizer(Scanner &scanner);
 
 	/**
 	 * Advances the tokenizer forward, returning the current parse state.
@@ -87,7 +87,7 @@ public:
 	 * Returns the scanner pointer, which is helpful for grabbing
 	 * the current line number for ErrorSys.
 	 */
-	Scanner const *GetScanner();
+	Scanner const &GetScanner();
 
 	/**
 	 * Returns whether or not the supplied token is a built-in type
@@ -95,7 +95,7 @@ public:
 	bool IsBuiltinType(TOK tok);
 
 private:
-	std::unique_ptr<Scanner> scanner;
+	Scanner &scanner;
 	std::vector<std::unique_ptr<Token>> states;
 	size_t pos;
 };
@@ -114,29 +114,20 @@ private:
  */
 class TempToken {
 public:
-	TempToken(Tokenizer *tokenizer)
-		: tokenizer(tokenizer), t(tokenizer->Next()) {
+	TempToken(Tokenizer &tokenizer)
+		: tokenizer(tokenizer), t(tokenizer.Next()) {
 	}
 	~TempToken() {
-		tokenizer->Back();
+		tokenizer.Back();
 	}
 	Token *operator ->() const {
 		return t;
-	}
-	TempToken &operator =(Tokenizer *tok) {
-		if (t != nullptr)
-			tok->Back();
-
-		this->tokenizer = tok;
-		this->t = tok->Next();
-
-		return *this;
 	}
 	Token *get() const {
 		return t;
 	}
 private:
-	Tokenizer *tokenizer;
+	Tokenizer &tokenizer;
 	Token *t;
 };
 

@@ -41,7 +41,7 @@ public:
 	 * such that the incomming token stream can be read from and
 	 * any syntax errors can be reported.
 	 */
-	Parser(std::unique_ptr<Tokenizer> && tokenizer, ErrorSys *errorsys);
+	Parser(Tokenizer &tokenizer, ErrorSys &errorsys);
 
 	/**
 	 * Starts the parsing process which validates whether or not
@@ -87,10 +87,10 @@ public:
 	void Validate();
 
 private:
+	Tokenizer &tokenizer;
+	ErrorSys &errorsys;
 	std::unique_ptr<::Parse> parse;
-	std::unique_ptr<Tokenizer> tokenizer;
 	FuncSet counter;
-	ErrorSys *errorsys;
 };
 
 #endif // H_PARSER
