@@ -43,8 +43,8 @@ public:
 class AssignmentStmt : public Statement
 {
 public:
-	AssignmentStmt(int line, std::string lvalue, Node<Evaluable> *rvalue)
-					: line(line), lvalue(lvalue), rvalue(rvalue) {};
+	AssignmentStmt(int line, std::string lvalue, std::unique_ptr<Node<Evaluable>> rvalue)
+					: line(line), lvalue(lvalue), rvalue(std::move(rvalue)) {};
 
 	StatementType Type() override {
 		return StatementType::Assignment;
@@ -105,20 +105,10 @@ public:
 	StatementList() {
 
 	};
-	~StatementList() {
-		for (auto *ptr : list)
-			delete ptr;
+	void add(std::unique_ptr<Statement> && statement) {
+		list.push_back(std::move(statement));
 	}
-    StatementList &operator=(const StatementList &other) // copy assignment
-    {
-    	list.clear();
-    	for (auto *ptr : other.list)
-    	{
-    		list.push_back(ptr);
-    	}
-        return *this;
-    }
-	std::vector<Statement*> list;
+	std::vector<std::unique_ptr<Statement>> list;
 };
 
 class Argument
@@ -138,7 +128,7 @@ class Function
 {
 public:
 	std::string identifier;
-	StatementList statements;
+	std::unique_ptr<StatementList> statements;
 	ArgumentList arguments;
 	int line;
 };

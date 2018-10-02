@@ -61,11 +61,20 @@ void ErrorSys::Spew() const
 	}
 
 	printf("Compiler exited with %d errors%s!\n", fatals, strlen(warnmsg) ? warnmsg : "");
-
 	printf("\n");
 }
 
 bool ErrorSys::Fatal() const
 {
 	return fatals > 0;
+}
+
+void ErrorSys::Exit() const
+{
+	this->Spew();
+
+	if (!this->Fatal())
+		printf("Compilation ended successfully.\n");
+    
+	exit(0);
 }

@@ -55,7 +55,7 @@ public:
 	 * Creates the tokenizer, we give the tokenizer our scanner.
 	 * The tokenizer is now the owner of the scanner (std::move)
 	 */
-	Tokenizer(std::unique_ptr<Scanner> &scanner);
+	Tokenizer(std::unique_ptr<Scanner> &&scanner);
 
 	/**
 	 * Advances the tokenizer forward, returning the current parse state.
@@ -87,7 +87,7 @@ public:
 	 * Returns the scanner pointer, which is helpful for grabbing
 	 * the current line number for ErrorSys.
 	 */
-	const Scanner *GetScanner();
+	Scanner const *GetScanner();
 
 	/**
 	 * Returns whether or not the supplied token is a built-in type

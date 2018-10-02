@@ -7,7 +7,7 @@
 #include "tokenizer.h"
 #include "parser.h"
 
-inline bool endswith(const std::string &value, const std::string &ending)
+inline bool endswith(std::string const &value, std::string const &ending)
 {
 	if (ending.size() > value.size())
 		return false;
@@ -15,7 +15,11 @@ inline bool endswith(const std::string &value, const std::string &ending)
 	return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
 
+#ifndef DEFAULT_TEST_FILE
 int main(int argc, char *argv[])
+#else
+int main()
+#endif
 {
 	printf("Compiler Version %s\n", COMPILER_VERSION);
 	printf("(c) Michael Flaherty 2018\n");
@@ -49,13 +53,9 @@ int main(int argc, char *argv[])
 #else
 	std::unique_ptr<Scanner> scanner = std::make_unique<Scanner>("test.x");
 #endif
-	std::unique_ptr<Tokenizer> tokenizer = std::make_unique<Tokenizer>(scanner);
+	std::unique_ptr<Tokenizer> tokenizer = std::make_unique<Tokenizer>(std::move(scanner));
 	std::unique_ptr<ErrorSys> errsys = std::make_unique<ErrorSys>();
-	std::unique_ptr<Parser> parser = std::make_unique <Parser>(tokenizer, errsys.get());
+	std::unique_ptr<Parser> parser = std::make_unique<Parser>(std::move(tokenizer), errsys.get());
 
 	parser->Parse();
-
-	if (!errsys->Fatal())
-		printf("Compilation ended successfully.\n");
-    return 0;
 }

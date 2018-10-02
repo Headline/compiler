@@ -9,7 +9,7 @@
 #include <memory>
 #include <unordered_set>
 
-typedef std::unordered_set<std::string> FuncSet;
+using FuncSet = std::unordered_set<std::string>;
 
 /**
  * The parse class is the result of a complete parse built by the parser.
@@ -19,12 +19,11 @@ typedef std::unordered_set<std::string> FuncSet;
 class Parse
 {
 public:
-	~Parse() {
-		for (auto *ptr : functions)
-			delete ptr;
+	Parse() : globals(std::make_unique<StatementList>()) {
+		
 	}
-	StatementList globals;
-	std::vector<Function *> functions;
+	std::unique_ptr<StatementList> globals;
+	std::vector<std::unique_ptr<Function>> functions;
 	std::vector<Native> natives;
 };
 
@@ -42,7 +41,7 @@ public:
 	 * such that the incomming token stream can be read from and
 	 * any syntax errors can be reported.
 	 */
-	Parser(std::unique_ptr<Tokenizer> &tokenizer, ErrorSys *errorsys);
+	Parser(std::unique_ptr<Tokenizer> && tokenizer, ErrorSys *errorsys);
 
 	/**
 	 * Starts the parsing process which validates whether or not
@@ -58,13 +57,13 @@ public:
 	/**
 	 * Parses statements, and stores their representation in the StatementList.
 	 */
-	void DoStatements(StatementList *list);
+	std::unique_ptr<StatementList> DoStatements();
 
 	/**
 	 * Parses a statement, and stores the representation in the statement provided.
 	 * Returns true if the statement is syntax valid and the parameter was populated.
 	 */
-	bool DoStatement(Statement **statement);
+	std::unique_ptr<Statement> DoStatement();
 
 	/**
 	 * Parses a native declaration.

@@ -1,6 +1,6 @@
 #include "scanner.h"
 
-Scanner::Scanner(const char *filename) : in(fin), pos(0)
+Scanner::Scanner(char const *filename) : in(fin), pos(0)
 {
 	fin.open(filename, std::ios::in);
 

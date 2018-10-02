@@ -10,14 +10,14 @@
  * index in this array corresponds with the desired error to be displayed by 
  * ErrorSys::Error
  */
-static const char * const errors[] = {
+static char const * const errors[] = {
 	/* 00 */	"empty statement",
 	/* 01 */	"expected token '%s'",
 	/* 02 */	"unexpected token '%s'",
 	/* 03 */	"expected built-in type, but got '%s'",
 	/* 04 */	"function definition missing for '%s'"
 };
-static const char * const warnings[] = {
+static char const * const warnings[] = {
 	/* 00 */	"unused function '%s'"
 };
 
@@ -63,6 +63,10 @@ public:
 	 */
 	bool Fatal() const;
 
+	/**
+	 * Immediately terminates the parse & spews errors if any.
+	 */
+	void Exit() const;
 private:
 	std::vector<std::string> output;
 	std::vector<std::string> warningoutput;

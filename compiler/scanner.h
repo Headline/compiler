@@ -66,7 +66,7 @@ public:
 	/**
 	 * Initializes the scanner with the given input file name
 	 */
-	Scanner(const char *filename);
+	Scanner(char const *filename);
 
 	/**
 	 * Advances the scanner to the next position.

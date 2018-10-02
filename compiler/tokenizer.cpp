@@ -1,6 +1,6 @@
 #include "tokenizer.h"
 
-Tokenizer::Tokenizer(std::unique_ptr<Scanner> &scanner)
+Tokenizer::Tokenizer(std::unique_ptr<Scanner> &&scanner)
 	: scanner(std::move(scanner))
 {
 	pos = 0;
@@ -8,7 +8,7 @@ Tokenizer::Tokenizer(std::unique_ptr<Scanner> &scanner)
 
 inline bool isspecialtoken(char tok)
 {
-	static const char constarr[] = { ';', '(', ')', '{', '}', '=', ',' };
+	static char const constarr[] = { ';', '(', ')', '{', '}', '=', ',' };
 	for (size_t i = 0; i < sizeof(constarr); ++i) {
 		if (tok == constarr[i])
 			return true;
@@ -116,7 +116,7 @@ bool Tokenizer::Peek(TOK tok)
 	return token->tok == tok;
 }
 
-const Scanner *Tokenizer::GetScanner()
+Scanner const *Tokenizer::GetScanner()
 {
 	return scanner.get();
 }

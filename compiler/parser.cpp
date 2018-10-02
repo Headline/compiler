@@ -1,6 +1,6 @@
 #include "parser.h"
 
-Parser::Parser(std::unique_ptr<Tokenizer> &tokenizer, ErrorSys *errorsys)
+Parser::Parser(std::unique_ptr<Tokenizer> && tokenizer, ErrorSys *errorsys)
 	: parse(std::make_unique<::Parse>()), tokenizer(std::move(tokenizer))
 {
 	this->errorsys = errorsys;
@@ -48,6 +48,23 @@ inline void EatUntilNext(TOK tok, Tokenizer *tokenizer)
 	} // keep eating tokens until we hit whatever
 }
 
+inline void EatUntilFunctionEnd(Tokenizer *tokenizer)
+{
+	int scope = 1; // we already missed one, so compensate for that
+	
+	Token *token;
+	while ((token = tokenizer->Next()) != nullptr) {
+		if (scope == 0)
+		{
+			return;
+		}
+		if (token->tok == '{')
+			scope++;
+		if (token->tok == '}')
+			scope--;
+	}
+}
+
 void Parser::DoGlobal()
 {
 	assert(tokenizer->Peek(tINT));
@@ -72,7 +89,7 @@ void Parser::DoGlobal()
 		return;
 	}
 	
-	parse->globals.list.push_back(new DeclarationStmt(ident->line, ident->identifier));
+	parse->globals->add(std::make_unique<DeclarationStmt>(ident->line, ident->identifier));
 }
 
 void Parser::DoNative()
@@ -219,6 +236,7 @@ void Parser::DoFunction()
 		tok = tokenizer->Next();
 		tokenizer->Back(); // back off the token to report the error
 		errorsys->Error(1, tok->line, "{"); // expected token '{'
+		EatUntilFunctionEnd(tokenizer.get());
 		return;
 	}
 
@@ -226,13 +244,17 @@ void Parser::DoFunction()
 	// we'll give the '{' back to the tokenizer and fall into ParseStatement
 	tokenizer->Back();
 
-	Function *function = new Function();
-	DoStatements(&function->statements);
+	std::unique_ptr<StatementList> statements = DoStatements();
+	if (!statements)
+	{
+		errorsys->Exit();
+	}
 
+	std::unique_ptr<Function> function = std::make_unique<Function>();
+	function->statements = std::move(statements);
 	function->identifier = ident->identifier;
 	function->line = ident->line;
-
-	this->parse->functions.push_back(function);
+	this->parse->functions.push_back(std::move(function));
 }
 
 inline bool IsStatement(Tokenizer *tokenizer)
@@ -283,7 +305,7 @@ inline bool IsStatement(Tokenizer *tokenizer)
 	return false;
 }
 
-void Parser::DoStatements(StatementList *list)
+std::unique_ptr<StatementList> Parser::DoStatements()
 {
 	Token *tok;
 	if ((tok = tokenizer->Match((TOK)'{')) == nullptr) {
@@ -292,16 +314,17 @@ void Parser::DoStatements(StatementList *list)
 		tok = tokenizer->Next();
 		tokenizer->Back(); // back off the token to report the error
 		errorsys->Error(1, tok->line, "{"); // expected token '{'
-		return;
+		return nullptr;
 	}
 
-	Statement *statement;
+	std::unique_ptr<StatementList> list = std::make_unique<StatementList>();
 	while (IsStatement(tokenizer.get())) {
-		if (DoStatement(&statement)) {
+		std::unique_ptr<Statement> stmt = DoStatement();
+		if (stmt) {
 #ifdef PARSER_DEBUG
 			printf("Statement found");
 #endif
-			list->list.push_back(statement);
+			list->add(std::move(stmt));
 		}
 	}
 
@@ -311,18 +334,21 @@ void Parser::DoStatements(StatementList *list)
 
 	if ((tok = tokenizer->Match((TOK)'}')) == nullptr) {
 		errorsys->Error(1, tokenizer->GetScanner()->GetLineNumber(), "}"); // expected token '}'
-		return;
+		return nullptr;
 	}
+	
+	return list;
 }
 
-bool Parser::DoStatement(Statement **statement)
+std::unique_ptr<Statement> Parser::DoStatement()
 {
 	if (tokenizer->Peek((TOK)';')) // empty statement
 	{
 		errorsys->Error(0, tokenizer->Next()->line); // we'll step forward, ';', and ignore it.
-		return false; // should be effective error recovery
+		return nullptr; // should be effective error recovery
 	}
 
+	std::unique_ptr<Statement> statement = nullptr;
 	Token *first = tokenizer->Next();
 	int line = first->line;
 	if (first->tok == tIDENT)
@@ -333,16 +359,16 @@ bool Parser::DoStatement(Statement **statement)
 			if (value->tok == tVAL) {
 
 				EvalVar var(value->identifier);
-				*statement = new AssignmentStmt(line, first->identifier, new Node<Evaluable>((EvalVar)var));
+				statement = std::make_unique<AssignmentStmt>(line, first->identifier, std::make_unique<Node<Evaluable>>((EvalVar)var));
 
 				Token *semicolon = tokenizer->Next();
 				if (semicolon->tok != (TOK)';') {
 
 					EatUntilNext((TOK)';', tokenizer.get()); // recover
 					errorsys->Error(1, semicolon->line, ";");
-					return false;
+					return nullptr;
 				}
-				return true;
+				return statement;
 			}
 			else {
 				EatUntilNext((TOK)';', tokenizer.get()); // recover
@@ -360,10 +386,10 @@ bool Parser::DoStatement(Statement **statement)
 					printf("Function call \"%s()\" found...\n", first->identifier.c_str());
 #endif
 					counter.insert(first->identifier);
-					*statement = new FuncCallStmt(line, first->identifier);
-					return true;
+					statement = std::make_unique<FuncCallStmt>(line, first->identifier);
+					return statement;
 				}
-				return false;
+				return nullptr;
 			}
 		}
 	}
@@ -375,26 +401,26 @@ bool Parser::DoStatement(Statement **statement)
 			errorsys->Error(1, identifier->line, "<identifier>"); // expected token <identifier>
 			
 			EatUntilNext((TOK)';', tokenizer.get()); // recover
-			return false;
+			return nullptr;
 		}
 		Token *semicolon = tokenizer->Next();
 		if (semicolon->tok != (TOK)';') {
 
 			EatUntilNext((TOK)';', tokenizer.get()); // recover
 			errorsys->Error(1, semicolon->line, ";");
-			return false;
+			return nullptr;
 		}
 
-		*statement = new DeclarationStmt(line, identifier->identifier);
-		return true;
+		statement = std::make_unique<DeclarationStmt>(line, identifier->identifier);
+		return statement;
 	}
 
-	return false;
+	return nullptr;
 }
 
-inline bool IsValidFunction(const std::string &identifier, const std::vector<Function*> &funcs)
+inline bool IsValidFunction(std::string const &identifier, std::vector<std::unique_ptr<Function>> const &funcs)
 {
-	for (auto func : funcs)
+	for (auto&& func : funcs)
 	{
 		if (func->identifier == identifier)
 		{
@@ -404,7 +430,7 @@ inline bool IsValidFunction(const std::string &identifier, const std::vector<Fun
 	return false;
 }
 
-inline bool IsValidNative(const std::string &identifier, const std::vector<Native> &natives)
+inline bool IsValidNative(std::string const &identifier, std::vector<Native> const &natives)
 {
 	for (auto native : natives)
 	{
@@ -418,17 +444,17 @@ inline bool IsValidNative(const std::string &identifier, const std::vector<Nativ
 
 void Parser::Validate()
 {
-	for (Function *func : this->parse->functions)
+	for (auto&& func : this->parse->functions)
 	{
 		// ensure all function calls are to things that are defined, or are forward decl'd
 		// as a native.
 		// TODO: Check parameters match as well
-		for (Statement *statement : func->statements.list)
+		for (auto && statement : func->statements->list)
 		{
 			assert(statement);
 			if (statement->Type() == Statement::StatementType::FunctionCall)
 			{
-				FuncCallStmt *stmt = dynamic_cast<FuncCallStmt *>(statement);
+				FuncCallStmt *stmt = dynamic_cast<FuncCallStmt *>(statement.get());
 				if (!IsValidFunction(stmt->identifier, this->parse->functions)
 					&& !IsValidNative(stmt->identifier, this->parse->natives))
 				{
