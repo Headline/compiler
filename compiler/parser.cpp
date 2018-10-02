@@ -1,7 +1,7 @@
 #include "parser.h"
 
 Parser::Parser(Tokenizer &tokenizer, ErrorSys &errorsys)
-	: parse(std::make_unique<::Parse>()), tokenizer(tokenizer), errorsys(errorsys)
+	: tokenizer(tokenizer), errorsys(errorsys), parse(std::make_unique<::Parse>())
 { }
 
 void Parser::Parse()
