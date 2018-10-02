@@ -48,9 +48,9 @@ inline void EatUntilFunctionEnd(Tokenizer &tokenizer)
 		{
 			return;
 		}
-		if (token->tok == '{')
+		if (token->tok == (TOK)'{')
 			scope++;
-		if (token->tok == '}')
+		if (token->tok == (TOK)'}')
 			scope--;
 	}
 }
