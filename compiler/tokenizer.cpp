@@ -1,9 +1,8 @@
 #include "tokenizer.h"
 
 Tokenizer::Tokenizer(Scanner &scanner)
-	: scanner(scanner)
+	: scanner(scanner), pos(0)
 {
-	pos = 0;
 }
 
 inline bool isspecialtoken(char tok)
@@ -34,7 +33,6 @@ Token *Tokenizer::Next()
 #endif
 	}
 
-
 	if (c == EOF)
 	{
 #ifdef TOKENIZER_DEBUG
@@ -42,7 +40,6 @@ Token *Tokenizer::Next()
 #endif
 		return nullptr;
 	}
-
 
 	std::string identifier;
 	do
@@ -61,7 +58,7 @@ Token *Tokenizer::Next()
 		identifier.append(1, c);
 
 	} while (!isspace((c = scanner.Next())) && !isspecialtoken(c)); // keep eating until we get another space or special token
-	
+
 	if (isspecialtoken(c)) // we hit a special on accident, lets remove it from the thing
 	{
 		scanner.Back(); // step scanner back

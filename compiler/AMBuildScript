@@ -10,10 +10,11 @@ if cxx.like('gcc'):
     ]
 elif cxx.like('msvc'):
 	cxx.cflags += [
-	  '-EHsc',
+    '/EHsc',
     '-W4',
     '-WX',
-    '-std:c++latest',
+    '-std:c++17',
+    '/Ox',
 	]
 
 if builder.options.default:
@@ -22,6 +23,8 @@ if builder.options.debugall:
 	cxx.defines += ['DEBUG_ALL']
 if builder.options.debugparser:
 	cxx.defines += ['PARSER_DEBUG']
+
+cxx.defines += ['_HAS_EXCEPTIONS=0']
 
 program = builder.cxx.Program('compiler')
 program.sources += [
