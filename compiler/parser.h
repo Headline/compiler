@@ -2,14 +2,16 @@
 #define H_PARSER
 
 #include "debug.h"
-#include "tokenizer.h"
 #include "error.h"
+#include "tokenizer.h"
 #include "language-constructs.h"
 
 #include <memory>
 #include <unordered_set>
 
 using FuncSet = std::unordered_set<std::string>;
+
+class ErrorSys;
 
 /**
  * The parse class is the result of a complete parse built by the parser.

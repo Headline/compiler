@@ -2,8 +2,10 @@
 #define H_ERROR
 
 #include <cstdarg>
+
 #include "debug.h"
 #include "tokenizer.h"
+#include "parser.h"
 
 /**
  * Static list of errors used by ErrorSys to report errors and warnings. The 
@@ -21,6 +23,7 @@ static char const * const warnings[] = {
 	/* 00 */	"unused function '%s'"
 };
 
+class Parser;
 /**
  * It is the parser's job to make sense of the syntax, and ensure that
  * the grammar of the source programmign language is correct. The parser
@@ -66,7 +69,7 @@ public:
 	/**
 	 * Immediately terminates the parse & spews errors if any.
 	 */
-	void Exit() const;
+	void Exit(Parser *parser) const;
 private:
 	std::vector<std::string> output;
 	std::vector<std::string> warningoutput;

@@ -1,6 +1,5 @@
 #include "error.h"
 
-
 ErrorSys::ErrorSys()
 {
 	this->fatals = 0;
@@ -69,8 +68,11 @@ bool ErrorSys::Fatal() const
 	return fatals > 0;
 }
 
-void ErrorSys::Exit() const
+void ErrorSys::Exit(Parser *parser) const
 {
+	if (parser)
+		parser->Validate();
+
 	this->Spew();
 
 	if (!this->Fatal())

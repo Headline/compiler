@@ -12,7 +12,7 @@ void Parser::Parse()
 		tokenizer.Back();
 
 		if (tok == nullptr) {
-			goto end;
+			errorsys.Exit(this);
 		}
 
 		switch (tok->tok) {
@@ -26,16 +26,8 @@ void Parser::Parse()
 			DoNative();
 			break;
 		default:
-			goto end;
+			errorsys.Exit(this);
 		}
-	}
-
-end:
-	this->Validate();
-
-	errorsys.Spew();
-	if (errorsys.Fatal()) {
-		exit(EXIT_FAILURE);
 	}
 }
 
@@ -245,7 +237,7 @@ void Parser::DoFunction()
 	std::unique_ptr<StatementList> statements = DoStatements();
 	if (!statements)
 	{
-		errorsys.Exit();
+		errorsys.Exit(this);
 	}
 
 	std::unique_ptr<Function> function = std::make_unique<Function>();

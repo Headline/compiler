@@ -30,7 +30,7 @@ public:
 
 		if (next >= line.size() || line[next] == '\0') { // if no more chars left
 
-			char buffer[1024]; // is this bad?
+			static char buffer[1024]; // is this bad?
 			stream.getline(buffer, sizeof(buffer)); //repopulate buffer with next
 #ifdef SCANNER_DEBUG
 			printf("No chars left, fetching line \"%s\"\n", buffer);
