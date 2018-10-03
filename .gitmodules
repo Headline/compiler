@@ -1,3 +1,6 @@
 [submodule "vm"]
 	path = vm
 	url = https://github.com/assyrianic/Tagha-Virtual-Machine
+[submodule "compiler/GSL"]
+	path = compiler/GSL
+	url = https://github.com/Microsoft/GSL

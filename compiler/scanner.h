@@ -8,6 +8,7 @@
 #include <cassert>
 #include <fstream>
 #include <string.h>
+#include <gsl/gsl>
 
 /**
  * CharFetcher is our method for grabbing the input file one line at a time,
@@ -21,10 +22,10 @@
 class CharFetcher
 {
 public:
-	CharFetcher(std::ifstream &stream) : stream(stream), next(0), lines(0) {
+	CharFetcher(std::ifstream &stream) noexcept : stream(stream), next(0), lines(0) {
 	};
 
-	char Get() {
+	char Get() noexcept {
 		if (stream.eof())
 			return EOF;
 
@@ -44,7 +45,7 @@ public:
 		return line[next++];
 	}
 
-	int LineCount() const {
+	int LineCount() const noexcept {
 		return lines;
 	}
 
@@ -66,36 +67,36 @@ public:
 	/**
 	 * Initializes the scanner with the given input file name
 	 */
-	Scanner(char const *filename);
+	Scanner(gsl::not_null<char const *> filename);
 
 	/**
 	 * Advances the scanner to the next position.
 	 */
-	char Next();
+	char Next() noexcept;
 
 	/**
 	 * Returns the current position of the scanner
      */
-	int Position() const;
+	int Position() const noexcept;
 
 	/**
 	 * Steps the scanner backwards. 
 	 */
-	void Back();
+	void Back() noexcept;
 
 	/**
 	 * Returns the length of the buffer. This value will change as Next() is called and
 	 * more tokens are added to the buffer.
 	 */
-	size_t BufferSize() const;
+	size_t BufferSize() const noexcept;
 
 	/**
 	 * Returns the amount of newlines we've passed, this is useful for the parser to report
 	 * to ErrorSys which line the error was on.
 	 */
-	int GetLineNumber() const;
+	int GetLineNumber() const noexcept;
 
-	bool Peek(char in);
+	bool Peek(char in) noexcept;
 private:
 	CharFetcher in;
 	std::ifstream fin;

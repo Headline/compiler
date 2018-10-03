@@ -114,7 +114,7 @@ private:
  */
 class TempToken {
 public:
-	TempToken(Tokenizer &tokenizer)
+	explicit TempToken(Tokenizer &tokenizer)
 		: tokenizer(tokenizer), t(tokenizer.Next()) {
 	}
 	~TempToken() {

@@ -2,6 +2,7 @@
 #define H_ERROR
 
 #include <cstdarg>
+#include <gsl/gsl>
 
 #include "debug.h"
 #include "tokenizer.h"
@@ -23,7 +24,8 @@ static char const * const warnings[] = {
 	/* 00 */	"unused function '%s'"
 };
 
-class Parser;
+class Parser; //fwd decl
+
 /**
  * It is the parser's job to make sense of the syntax, and ensure that
  * the grammar of the source programmign language is correct. The parser
@@ -48,28 +50,28 @@ public:
 	 * Queues up error of the given index. Each error number directly corresponds with
 	 * an index in the phrases vector.
 	 */
-	void Error(int error, int lines, ...);
+	void Error(int error, int lines, ...) noexcept;
 
 	/**
 	 * Queues a warning which does not result in a fatal compilation failure, but warns
 	 * the programmer of possible uninteneded mistakes.
 	 */
-	void Warning(int warning, int lines, ...);
+	void Warning(int warning, int lines, ...) noexcept;
 
 	/**
 	 * Spits out all errors queued to the stdout, if any.
 	 */
-	void Spew() const;
+	void Spew() const noexcept;
 
 	/**
 	 * Returns if we've hit a fatal error 
 	 */
-	bool Fatal() const;
+	bool Fatal() const noexcept;
 
 	/**
 	 * Immediately terminates the parse & spews errors if any.
 	 */
-	void Exit(Parser *parser) const;
+	void Exit(gsl::not_null<Parser const *> parser) const noexcept;
 private:
 	std::vector<std::string> output;
 	std::vector<std::string> warningoutput;

@@ -1,10 +1,12 @@
 #include "parser.h"
 
-Parser::Parser(Tokenizer &tokenizer, ErrorSys &errorsys)
+#include <gsl/gsl>
+
+Parser::Parser(Tokenizer &tokenizer, ErrorSys &errorsys) noexcept
 	: tokenizer(tokenizer), errorsys(errorsys), parse(std::make_unique<::Parse>())
 { }
 
-void Parser::Parse()
+void Parser::Parse() noexcept
 {
 	while (true) {
 
@@ -31,14 +33,14 @@ void Parser::Parse()
 	}
 }
 
-inline void EatUntilNext(TOK tok, Tokenizer &tokenizer)
+inline void EatUntilNext(TOK tok, Tokenizer &tokenizer) noexcept
 {
 	Token *token;
 	while ((token = tokenizer.Next())->tok != (TOK)tok) {
 	} // keep eating tokens until we hit whatever
 }
 
-inline void EatUntilFunctionEnd(Tokenizer &tokenizer)
+inline void EatUntilFunctionEnd(Tokenizer &tokenizer) noexcept
 {
 	int scope = 1; // we already missed one, so compensate for that
 	
@@ -55,9 +57,9 @@ inline void EatUntilFunctionEnd(Tokenizer &tokenizer)
 	}
 }
 
-void Parser::DoGlobal()
+void Parser::DoGlobal() noexcept
 {
-	assert(tokenizer.Peek(tINT));
+	Expects(tokenizer.Peek(tINT));
 
 	Token *inttok = tokenizer.Next(); // eat int
 
@@ -82,9 +84,9 @@ void Parser::DoGlobal()
 	parse->globals->add(std::make_unique<DeclarationStmt>(ident->line, ident->identifier));
 }
 
-void Parser::DoNative()
+void Parser::DoNative() noexcept
 {
-	assert(tokenizer.Peek(tNATIVE));
+	Expects(tokenizer.Peek(tNATIVE));
 
 	Native native;
 	Token *nat = tokenizer.Next(); // eat native
@@ -124,7 +126,7 @@ void Parser::DoNative()
 	this->parse->natives.push_back(native);
 }
 
-void Parser::DoArguments(ArgumentList *args)
+void Parser::DoArguments(ArgumentList *args) noexcept
 {
 #ifdef PARSER_DEBUG
 	printf("Falling into argument parsing\n");
@@ -179,15 +181,15 @@ void Parser::DoArguments(ArgumentList *args)
 		}
 	}
 
-	TempToken token = tokenizer;
+	TempToken token{tokenizer};
 #ifdef PARSER_DEBUG
 		printf("Argument end. Net token: %c/%i\n", token->tok, token->tok);
 #endif
 }
 
-void Parser::DoFunction()
+void Parser::DoFunction() noexcept
 {
-	assert(tokenizer.Peek(tFUNC));
+	Expects(tokenizer.Peek(tFUNC));
 	Token *func = tokenizer.Next(); // eat func
 
 #ifdef PARSER_DEBUG
@@ -223,9 +225,10 @@ void Parser::DoFunction()
 	if ((tok = tokenizer.Match((TOK)'{')) == nullptr) { // look for '{'
 		// we didn't find it, so in order to produce a sensible
 		// error, we'll match the next token and point our error there.
-		tok = tokenizer.Next();
-		tokenizer.Back(); // back off the token to report the error
-		errorsys.Error(1, tok->line, "{"); // expected token '{'
+		{
+			TempToken next{tokenizer};
+			errorsys.Error(1, next->line, "{"); // expected token '{'
+		}
 		EatUntilFunctionEnd(tokenizer);
 		return;
 	}
@@ -247,9 +250,9 @@ void Parser::DoFunction()
 	this->parse->functions.push_back(std::move(function));
 }
 
-inline bool IsStatement(Tokenizer &tokenizer)
+inline bool IsStatement(Tokenizer &tokenizer) noexcept
 {
-	TempToken tok(tokenizer);
+	TempToken tok{tokenizer};
 	if (tok.get() == nullptr) //eof
 	{
 		return false;
@@ -258,9 +261,13 @@ inline bool IsStatement(Tokenizer &tokenizer)
 	{
 		return true;
 	}
+	else if (tok->tok == (TOK)'}') // end of scope
+	{
+		return false;
+	}
 	else if (tok->tok == tINT)
 	{
-		TempToken ident = tokenizer;
+		TempToken ident{tokenizer};
 		if (ident.get() == nullptr) // eof
 		{
 			return false;
@@ -270,7 +277,7 @@ inline bool IsStatement(Tokenizer &tokenizer)
 	}
 	else if (tok->tok == tIDENT)
 	{
-		TempToken next = tokenizer;
+		TempToken next{tokenizer};
 		if (next.get() == nullptr) // eof
 		{
 			return false;
@@ -278,12 +285,12 @@ inline bool IsStatement(Tokenizer &tokenizer)
 
 		if (next->tok == (TOK)'=')
 		{
-			TempToken value = tokenizer;
+			TempToken value{tokenizer};
 			return (value->tok == tVAL && tokenizer.Peek((TOK)';'));
 		}
 		else if (next->tok == (TOK)'(')
 		{
-			TempToken close = tokenizer;
+			TempToken close{tokenizer};
 			if (close.get() == nullptr)
 			{
 				return false;
@@ -295,15 +302,14 @@ inline bool IsStatement(Tokenizer &tokenizer)
 	return false;
 }
 
-std::unique_ptr<StatementList> Parser::DoStatements()
+std::unique_ptr<StatementList> Parser::DoStatements() noexcept
 {
 	Token *tok;
 	if ((tok = tokenizer.Match((TOK)'{')) == nullptr) {
 		// we didn't find it, so in order to produce a sensible
 		// error, we'll match the next token and point our error there.
-		tok = tokenizer.Next();
-		tokenizer.Back(); // back off the token to report the error
-		errorsys.Error(1, tok->line, "{"); // expected token '{'
+		TempToken next{tokenizer};
+		errorsys.Error(1, next->line, "{"); // expected token '{'
 		return nullptr;
 	}
 
@@ -330,7 +336,7 @@ std::unique_ptr<StatementList> Parser::DoStatements()
 	return list;
 }
 
-std::unique_ptr<Statement> Parser::DoStatement()
+std::unique_ptr<Statement> Parser::DoStatement() noexcept
 {
 	if (tokenizer.Peek((TOK)';')) // empty statement
 	{
@@ -408,7 +414,7 @@ std::unique_ptr<Statement> Parser::DoStatement()
 	return nullptr;
 }
 
-inline bool IsValidFunction(std::string const &identifier, std::vector<std::unique_ptr<Function>> const &funcs)
+inline bool IsValidFunction(std::string const &identifier, std::vector<std::unique_ptr<Function>> const &funcs) noexcept
 {
 	for (auto&& func : funcs)
 	{
@@ -420,7 +426,7 @@ inline bool IsValidFunction(std::string const &identifier, std::vector<std::uniq
 	return false;
 }
 
-inline bool IsValidNative(std::string const &identifier, std::vector<Native> const &natives)
+inline bool IsValidNative(std::string const &identifier, std::vector<Native> const &natives) noexcept
 {
 	for (auto native : natives)
 	{
@@ -432,7 +438,7 @@ inline bool IsValidNative(std::string const &identifier, std::vector<Native> con
 	return false;
 }
 
-void Parser::Validate()
+void Parser::Validate() const noexcept
 {
 	for (auto&& func : this->parse->functions)
 	{
@@ -441,10 +447,10 @@ void Parser::Validate()
 		// TODO: Check parameters match as well
 		for (auto && statement : func->statements->list)
 		{
-			assert(statement);
+			Expects(statement);
 			if (statement->Type() == Statement::StatementType::FunctionCall)
 			{
-				FuncCallStmt *stmt = dynamic_cast<FuncCallStmt *>(statement.get());
+				gsl::not_null<FuncCallStmt *> stmt = dynamic_cast<FuncCallStmt *>(statement.get());
 				if (!IsValidFunction(stmt->identifier, this->parse->functions)
 					&& !IsValidNative(stmt->identifier, this->parse->natives))
 				{

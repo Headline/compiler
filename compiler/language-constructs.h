@@ -43,7 +43,7 @@ public:
 class AssignmentStmt : public Statement
 {
 public:
-	AssignmentStmt(int line, std::string lvalue, std::unique_ptr<Node<Evaluable>> rvalue)
+	AssignmentStmt(int line, std::string const &lvalue, std::unique_ptr<Node<Evaluable>> rvalue)
 					: line(line), lvalue(lvalue), rvalue(std::move(rvalue)) {};
 
 	StatementType Type() override {
@@ -58,7 +58,7 @@ public:
 class DeclarationStmt : public Statement
 {
 public:
-	DeclarationStmt(int line, std::string var) : line(line), var(var) {};
+	DeclarationStmt(int line, std::string const &var) : line(line), var(var) {};
 	StatementType Type() override {
 		return StatementType::Declaration;
 	}
@@ -69,7 +69,7 @@ public:
 class FuncCallStmt : public Statement
 {
 public:
-	FuncCallStmt(int line, std::string identifier) : line(line), identifier(identifier) {};
+	FuncCallStmt(int line, std::string const &identifier) : line(line), identifier(identifier) {};
 	StatementType Type() override {
 		return StatementType::FunctionCall;
 	}
