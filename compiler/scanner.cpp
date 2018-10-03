@@ -1,7 +1,10 @@
 #include "scanner.h"
 
-Scanner::Scanner(char const *filename) : in(fin), pos(0)
+#include <gsl/gsl>
+
+Scanner::Scanner(gsl::not_null<char const *> filename) : in(fin), pos(0)
 {
+
 	fin.open(filename, std::ios::in);
 
 	if (!fin.good())
@@ -12,16 +15,15 @@ Scanner::Scanner(char const *filename) : in(fin), pos(0)
 #else
 		strerror_s(error, sizeof(error), errno);
 #endif
-		printf("// Error: %s: \"%s\"\n", error, filename);
+		printf("// Error: %s: \"%s\"\n", error, filename.get());
 		exit(EXIT_FAILURE);
 	}
-
 #ifdef SCANNER_DEBUG
 	printf("Creating scanner\n");
 #endif
 }
 
-bool Scanner::Peek(char input)
+bool Scanner::Peek(char input) noexcept
 {
 	char temp = this->Next();
 	this->Back();
@@ -29,7 +31,7 @@ bool Scanner::Peek(char input)
 	return temp == input;
 }
 
-char Scanner::Next()
+char Scanner::Next() noexcept
 {
 	if (pos == chars.size() && !fin.eof()) // fetch more if we even can
 	{
@@ -42,24 +44,24 @@ char Scanner::Next()
 		return EOF;
 }
 
-void Scanner::Back()
+void Scanner::Back() noexcept
 {
-	assert(pos > 0);
+	Expects(pos > 0);
 	pos--;
 
 }
 
-int Scanner::Position() const
+int Scanner::Position() const noexcept
 {
 	return pos;
 }
 
-size_t Scanner::BufferSize() const
+size_t Scanner::BufferSize() const noexcept
 {
 	return chars.size();
 }
 
-int Scanner::GetLineNumber() const
+int Scanner::GetLineNumber() const noexcept
 {
 	return in.LineCount();
 }

@@ -1,3 +1,5 @@
+import os
+
 cxx = builder.DetectCxx()
 
 if cxx.like('gcc'):
@@ -26,6 +28,10 @@ if builder.options.debugparser:
 
 cxx.defines += ['_HAS_EXCEPTIONS=0']
 
+cxx.includes += [
+	os.path.join(builder.sourcePath, 'GSL', 'include'),
+]
+
 program = builder.cxx.Program('compiler')
 program.sources += [
   'compiler.cpp',
@@ -34,5 +40,4 @@ program.sources += [
   'tokenizer.cpp',
   'scanner.cpp'
 ]
-
 builder.Add(program)

@@ -6,7 +6,7 @@ ErrorSys::ErrorSys()
 	this->warns = 0;
 }
 
-void ErrorSys::Error(int error, int line, ...)
+void ErrorSys::Error(int error, int line, ...) noexcept
 {
 	va_list ap;
 	va_start(ap, line);
@@ -23,7 +23,7 @@ void ErrorSys::Error(int error, int line, ...)
 
 }
 
-void ErrorSys::Warning(int warning, int line, ...)
+void ErrorSys::Warning(int warning, int line, ...) noexcept
 {
 	va_list ap;
 	va_start(ap, line);
@@ -31,6 +31,7 @@ void ErrorSys::Warning(int warning, int line, ...)
 	warns++;
 
 	char errorstr[128];
+	Expects(strlen(warnings[warning]) < sizeof(errorstr));
 	vsnprintf(errorstr, sizeof(errorstr), warnings[warning], ap);
 
 	char errorstring[256];
@@ -39,7 +40,7 @@ void ErrorSys::Warning(int warning, int line, ...)
 	va_end(ap);
 }
 
-void ErrorSys::Spew() const
+void ErrorSys::Spew() const noexcept
 {
 	for (auto str : warningoutput) {
 		fprintf(stderr, "%s\n", str.c_str());
@@ -48,31 +49,24 @@ void ErrorSys::Spew() const
 		fprintf(stderr, "%s\n", str.c_str());
 	}
 
-	char warnmsg[64];
-
+	char warnmsg[64] = "";
 	if (warns > 0)
 	{
 		snprintf(warnmsg, sizeof(warnmsg), " and %d warnings", warns);
-	}
-	else
-	{
-		memset(warnmsg, 0, sizeof(warnmsg));
 	}
 
 	printf("Compiler exited with %d errors%s!\n", fatals, strlen(warnmsg) ? warnmsg : "");
 	printf("\n");
 }
 
-bool ErrorSys::Fatal() const
+bool ErrorSys::Fatal() const noexcept
 {
 	return fatals > 0;
 }
 
-void ErrorSys::Exit(Parser *parser) const
+void ErrorSys::Exit(gsl::not_null<Parser const *> parser) const noexcept
 {
-	if (parser)
-		parser->Validate();
-
+	parser->Validate();
 	this->Spew();
 
 	if (!this->Fatal())
